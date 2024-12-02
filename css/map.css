@@ -1,0 +1,83 @@
+
+#map {
+    height: 500px;
+    width: 100%;
+    margin-bottom: 20px;
+    position: relative; /* Für die absolute Positionierung der Legende */
+}
+
+form {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: 600px;
+    background-color: #f9f9f9;
+}
+label {
+    display: block;
+    margin-top: 10px;
+}
+fieldset {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+.checkbox-group, .radio-group, .time-select, .threshold-group {
+    display: flex;
+    flex-direction: column;
+}
+button {
+    margin: 5px 5px 5px 0;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #0056b3;
+}
+.submit-btn {
+    background-color: #28a745;
+}
+.submit-btn:hover {
+    background-color: #218838;
+}
+/* Legende Styling */
+.legend {
+    background: white;
+    padding: 10px;
+    line-height: 18px;
+    color: #555;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    position: absolute;
+    top: 10px; /* Über der Karte positioniert */
+    right: 10px; /* Rechts oben */
+    z-index: 1000;
+    opacity: 0.9; /* Leicht transparent */
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: inline-block;
+}
+/* Formular standardmäßig verstecken */
+#filterForWorkload {
+    display: none;
+}
+
+.button-group {
+    margin: 20px;
+}
+.button-group button {
+    margin-right: 10px;
+}
