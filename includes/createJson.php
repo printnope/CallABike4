@@ -51,7 +51,7 @@ try {
             WHERE Start_Station_ID = ?
             GROUP BY Ende_Station_ID
             ORDER BY Anzahl DESC
-            LIMIT 3
+            
         ");
         $popularDestStmt->bind_param('i', $stationID);
         $popularDestStmt->execute();
@@ -212,7 +212,7 @@ try {
             'Anzahl_Startvorgaenge'     => (int)$station['Startvorgaenge'],
             'Anzahl_Endvorgaenge'       => (int)$station['Endvorgaenge'],
             'Gesamtzahl_Fahrten'        => $totalTrips,
-            'Top_3_Beliebteste_Endstationen' => $popularDestinations,
+            'Beliebteste_Endstationen_sortiert' => $popularDestinations,
             'Anzahl_Fahrten_pro_Wochentag' => $weekdayTrips,
             'Anzahl_Fahrten_pro_Wochentag_und_Stunde' => $weekdayHourlyTrips,
             'Buchungsportale_pro_Wochentag_und_Stunde' => $buchungsportaleHourly,

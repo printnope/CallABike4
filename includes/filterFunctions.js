@@ -25,15 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Schwellenwert abrufen
             const thresholdInput = document.getElementById('threshold');
-            const threshold = parseInt(thresholdInput.value) || 100; // Standardwert 100, falls keine Eingabe
-
-            // Debug-Ausgaben (kann später entfernt werden)
-            console.log('Startzeit:', startTime);
-            console.log('Endzeit:', endTime);
-            console.log('Ausgewählte Wochentage:', selectedWeekdays);
-            console.log('Buchungstyp:', buchungstyp);
-            console.log('Ausgewählte Buchungsportale:', selectedPortals);
-            console.log('Schwellenwert:', threshold);
+            const threshold = parseInt(thresholdInput.value) ;
 
             // Filterfunktion aufrufen und Eingabewerte übergeben
             filterMarkersByCriteria(startTime, endTime, selectedWeekdays, buchungstyp, threshold, selectedPortals);
