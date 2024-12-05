@@ -218,7 +218,7 @@ try {
             'Buchungsportale_pro_Wochentag_und_Stunde' => $buchungsportaleHourly,
             'Stosszeit'                 => $peakHour,
             'Beliebtester_Wochentag'    => $popularWeekday,
-            'Beliebteste_Endstation'    => isset($popularDestinations[0]) ? $popularDestinations[0] : null
+            'Beliebteste_Endstation'    => isset($popularDestinations[0])
         ];
     }
 
