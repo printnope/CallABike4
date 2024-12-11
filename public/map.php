@@ -32,6 +32,8 @@
     <button onclick="visualizeWorkloadInTotal()">Visualize Workload</button>
     <button onclick="showSearchStation()">Search for Station</button>
     <button onclick="startRoutingFromCurrentPosition()">Routing from current position</button>
+    <!-- NEUER BUTTON -->
+    <button onclick="showAddressSearch()">Routing from address</button>
 </div>
 
 <!-- Div für die Stationssuche, anfänglich ausgeblendet -->
@@ -145,6 +147,14 @@
     </form>
 </div>
 
+
+<!-- NEUES DIV für die Adress-Suche -->
+<div id="addressSearchDiv" style="display:none; margin-top:10px;">
+    <input type="text" id="addressInput" placeholder="Adresse eingeben..." style="width:200px;">
+    <button onclick="searchAddressForRouting()">Adresse suchen</button>
+</div>
+
+
 <!-- Skripte -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
@@ -152,14 +162,17 @@
 <script src="../includes/workLoadFunctions.js"></script>
 <script src="../includes/stationsSelector.js"></script>
 <script src="../includes/routingFromCurrentPosition.js"></script>
+<script src="../includes/adressSearchRouting.js"></script>
 <script>
     function showFilterForm() {
         resetMarkers()
         const filterDiv = document.getElementById('filterForWorkload');
         const searchDiv = document.getElementById('searchForStationDiv');
-        if (filterDiv && searchDiv) {
+        const addressDiv = document.getElementById('addressSearchDiv');
+        if (filterDiv && searchDiv && addressDiv) {
             filterDiv.style.display = 'block';
             searchDiv.style.display = 'none';
+            addressDiv.style.display = 'none';
         }
     }
 
@@ -167,9 +180,24 @@
         resetMarkers()
         const filterDiv = document.getElementById('filterForWorkload');
         const searchDiv = document.getElementById('searchForStationDiv');
-        if (filterDiv && searchDiv) {
+        const addressDiv = document.getElementById('addressSearchDiv');
+        if (filterDiv && searchDiv && addressDiv) {
             searchDiv.style.display = 'block';
             filterDiv.style.display = 'none';
+            addressDiv.style.display = 'none';
+        }
+    }
+
+    // NEUE FUNKTION zum Anzeigen der Adresssuche
+    function showAddressSearch() {
+        resetMarkers();
+        const filterDiv = document.getElementById('filterForWorkload');
+        const searchDiv = document.getElementById('searchForStationDiv');
+        const addressDiv = document.getElementById('addressSearchDiv');
+        if (filterDiv && searchDiv && addressDiv) {
+            addressDiv.style.display = 'block';
+            filterDiv.style.display = 'none';
+            searchDiv.style.display = 'none';
         }
     }
 </script>
