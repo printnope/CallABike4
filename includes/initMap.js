@@ -76,6 +76,10 @@ function resetMarkers(){
         window.map.removeControl(routeControl);
         window.map.removeLayer(window.userMarker);
     }
+    if (routeControlFromAddress){
+        window.map.removeControl(routeControlFromAddress);
+        window.map.removeLayer(addressMarker);
+    }
 
     let allMarkers = window.markerArray;
     allMarkers.forEach(marker => {
