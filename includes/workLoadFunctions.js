@@ -1,4 +1,3 @@
-// workLoadFunctions.js
 
 document.addEventListener('DOMContentLoaded', function () {
     let filterForm = document.getElementById('filterForm');
@@ -80,7 +79,7 @@ function getStartEndInPeriod(stationData, weekdays, startTime, endTime, selected
         const endHour = parseInt(endTime.split(':')[0], 10);
 
         for (let hour = startHour; hour <= endHour; hour++) {
-            let hourIndex = hour >= 24 ? 23 : hour;
+            let hourIndex = hour;
             if (stundenDaten[hourIndex]) {
                 const { s, e } = accumulateHourData(stundenDaten[hourIndex], portalDaten[hourIndex], selectedPortals, buchungstyp);
                 startInPeriod += s;
@@ -147,7 +146,7 @@ function getKurzWochentag(wochentagLang) {
         'samstag': 'Sa',
         'sonntag': 'So'
     };
-    return mapping[wochentagLang.toLowerCase()] || '';
+    return mapping[wochentagLang.toLowerCase()];
 }
 
 function setMarkerColorBasedOnValue(marker, startInPeriod, endInPeriod, buchungstyp, threshold) {
