@@ -154,6 +154,7 @@
 <script src="../includes/routingFromCurrentPosition.js"></script>
 <script>
     function showFilterForm() {
+        resetMarkers()
         const filterDiv = document.getElementById('filterForWorkload');
         const searchDiv = document.getElementById('searchForStationDiv');
         if (filterDiv && searchDiv) {
@@ -163,6 +164,7 @@
     }
 
     function showSearchStation() {
+        resetMarkers()
         const filterDiv = document.getElementById('filterForWorkload');
         const searchDiv = document.getElementById('searchForStationDiv');
         if (filterDiv && searchDiv) {

@@ -1,6 +1,6 @@
 // routingFromCurrentPosition.js
 
-let userMarker = null;
+window.userMarker = null;
 let routeControl = null;
 let nearestStation = null;
 

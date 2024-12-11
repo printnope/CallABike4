@@ -72,6 +72,11 @@ fetch(pathToJson)
 
 // Funktion zum Zurücksetzen der Marker
 function resetMarkers(){
+    if (routeControl) {
+        window.map.removeControl(routeControl);
+        window.map.removeLayer(window.userMarker);
+    }
+
     let allMarkers = window.markerArray;
     allMarkers.forEach(marker => {
         marker.setIcon(window.defaultIcon);
