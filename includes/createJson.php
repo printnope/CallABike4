@@ -51,7 +51,6 @@ try {
             WHERE Start_Station_ID = ?
             GROUP BY Ende_Station_ID
             ORDER BY Anzahl DESC
-            
         ");
         $popularDestStmt->bind_param('i', $stationID);
         $popularDestStmt->execute();
@@ -145,15 +144,14 @@ try {
         }
         $endTripsStmt->close();
 
-        // *** Buchungsportale pro Wochentag und Stunde erfassen ***
-        // Initialisiere das Array für Buchungsportale
+        // Buchungsportale pro Wochentag und Stunde erfassen
         $buchungsportaleHourly = [];
+        $portale = ["iPhone CAB", "Android CAB", "IVR", "Windows", "iPhone SRH", "LIDL-BIKE", "Android SRH", "Techniker F_5 (-67212-)", "iPhone KON"];
+
         foreach ($weekdayHours as $day) {
             $buchungsportaleHourly[$day] = [];
             for ($h = 0; $h < 24; $h++) {
                 $buchungsportaleHourly[$day][$h] = [];
-                // Definieren Sie die möglichen Buchungsportale
-                $portale = ["iPhone CAB", "Android CAB", "IVR", "Windows", "iPhone SRH", "LIDL-BIKE", "Android SRH", "Techniker F_5 (-67212-)", "iPhone KON"];
                 foreach ($portale as $portal) {
                     $buchungsportaleHourly[$day][$h][$portal] = [
                         'Anzahl_Startvorgaenge' => 0,
@@ -203,22 +201,48 @@ try {
         }
         $endPortalStmt->close();
 
+        // *** NEU: Buchungsportale sortiert ermitteln ***
+        // Zunächst die Gesamtanzahl pro Portal summieren
+        $portalCounts = [];
+        foreach ($buchungsportaleHourly as $day => $hoursData) {
+            foreach ($hoursData as $hour => $portalData) {
+                foreach ($portalData as $portal => $counts) {
+                    if (!isset($portalCounts[$portal])) {
+                        $portalCounts[$portal] = 0;
+                    }
+                    $portalCounts[$portal] += $counts['Anzahl_Startvorgaenge'] + $counts['Anzahl_Endvorgaenge'];
+                }
+            }
+        }
+
+        // Nur verwendete Portale berücksichtigen (Portale mit mindestens 1 Buchung)
+        $usedPortals = array_filter($portalCounts, function($count) {
+            return $count > 0;
+        });
+
+        // In absteigender Reihenfolge sortieren
+        arsort($usedPortals);
+
+        // Portalnamen in der sortierten Reihenfolge extrahieren
+        $buchungsportale_sortiert = array_keys($usedPortals);
+
         // Daten sammeln
         $stations[] = [
-            'Station_ID'                => $stationID,
-            'station_name'              => $station['Station_Name'],
-            'Latitude'                  => (float)$station['Latitude'],
-            'Longitude'                 => (float)$station['Longitude'],
-            'Anzahl_Startvorgaenge'     => (int)$station['Startvorgaenge'],
-            'Anzahl_Endvorgaenge'       => (int)$station['Endvorgaenge'],
-            'Gesamtzahl_Fahrten'        => $totalTrips,
-            'Beliebteste_Endstationen_sortiert' => $popularDestinations,
-            'Anzahl_Fahrten_pro_Wochentag' => $weekdayTrips,
+            'Station_ID'                            => $stationID,
+            'station_name'                          => $station['Station_Name'],
+            'Latitude'                              => (float)$station['Latitude'],
+            'Longitude'                             => (float)$station['Longitude'],
+            'Anzahl_Startvorgaenge'                 => (int)$station['Startvorgaenge'],
+            'Anzahl_Endvorgaenge'                   => (int)$station['Endvorgaenge'],
+            'Gesamtzahl_Fahrten'                    => $totalTrips,
+            'Beliebteste_Endstationen_sortiert'     => $popularDestinations,
+            'Anzahl_Fahrten_pro_Wochentag'          => $weekdayTrips,
             'Anzahl_Fahrten_pro_Wochentag_und_Stunde' => $weekdayHourlyTrips,
             'Buchungsportale_pro_Wochentag_und_Stunde' => $buchungsportaleHourly,
-            'Stosszeit'                 => $peakHour,
-            'Beliebtester_Wochentag'    => $popularWeekday,
-            'Beliebteste_Endstation'    => isset($popularDestinations[0])
+            'Buchungsportale_sortiert'              => $buchungsportale_sortiert, // Hier die neue Eigenschaft
+            'Stosszeit'                             => $peakHour,
+            'Beliebtester_Wochentag'                => $popularWeekday,
+            'Beliebteste_Endstation'                => $popularDestinations[0]
         ];
     }
 

@@ -1,4 +1,4 @@
-
+// initMap.js
 
 // Initialisiere das Marker-Array im globalen Scope
 window.markerArray = [];
@@ -35,7 +35,7 @@ window.redIcon = L.icon({
 let pathToJson = "../data/stations.json";
 
 // Erstelle die Karte und zentriere sie auf Frankfurt am Main
-var map = L.map('map').setView([50.1109, 8.6821], 13);
+window.map = L.map('map').setView([50.1109, 8.6821], 13);
 
 // Füge die OpenStreetMap-Kacheln hinzu
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -86,7 +86,7 @@ function resetMarkers(){
         // Berechne die Differenz zwischen Start- und Endvorgängen
         let difference = marker.stationData.Anzahl_Startvorgaenge - marker.stationData.Anzahl_Endvorgaenge;
 
-        // Aktualisiere das Popup mit der Differenz
+        // Aktualisiere das Popup
         marker.setPopupContent(
             `<b>${marker.stationData.station_name}</b><br>
              Startvorgänge: ${marker.stationData.Anzahl_Startvorgaenge}<br>
