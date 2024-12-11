@@ -27,7 +27,7 @@
 <div class="button-group">
     <button onclick="showFilterForm()">Filter Gesamtzahlen</button>
     <button onclick="resetMarkers()">Reset</button>
-    <button onclick="visualizeWorkload()">Visualize Workload</button>
+    <button onclick="visualizeWorkloadInTotal()">Visualize Workload</button>
 </div>
 
 <!-- Formular für Benutzereingaben -->
@@ -158,20 +158,10 @@
 <!-- Skripte -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="../includes/initMap.js"></script>
-<script src="../includes/filterFunctions.js"></script>
+<script src="../includes/workLoadFunctions.js"></script>
 
 <?php
 include '../includes/footer.php';
 ?>
-<!-- Funktion zum Anzeigen des Formulars -->
-<script>
-    function showFilterForm() {
-        const formDiv = document.getElementById('filterForWorkload');
-        if (formDiv) {
-            formDiv.style.display = 'block'; // Formular sichtbar machen
-        }
-    }
-</script>
-
 </body>
 </html>
