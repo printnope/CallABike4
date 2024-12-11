@@ -12,13 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initializeStationSelectionUI(markers) {
     const searchDiv = document.getElementById('searchForStationDiv');
-    if (!searchDiv) return; // Falls das Div nicht vorhanden ist
+    if (!searchDiv) return;
 
     const container = document.createElement('div');
     container.id = 'stations-select-container';
     container.style.margin = '10px 0';
 
-    // Suchfeld
     const labelSearch = document.createElement('label');
     labelSearch.setAttribute('for', 'stationSearch');
     labelSearch.textContent = 'Station suchen:';
@@ -35,7 +34,6 @@ function initializeStationSelectionUI(markers) {
 
     container.appendChild(document.createElement('br'));
 
-    // Select-Box
     const labelSelect = document.createElement('label');
     labelSelect.setAttribute('for', 'stationSelect');
     labelSelect.textContent = 'Station wählen:';
@@ -53,16 +51,12 @@ function initializeStationSelectionUI(markers) {
 
     container.appendChild(selectElement);
 
-    // Container in das searchDiv einfügen (vor die Tabelle)
     searchDiv.insertBefore(container, document.getElementById('stationDataTable'));
 
-    // Alle Stationen aus markerArray extrahieren
     const allStations = markers.map(m => m.stationData);
-
     let filteredStations = allStations;
     populateStationsSelect(selectElement, filteredStations);
 
-    // Such-Event
     searchInput.addEventListener('input', function() {
         const query = this.value.toLowerCase().trim();
         filteredStations = allStations.filter(station =>
@@ -71,10 +65,8 @@ function initializeStationSelectionUI(markers) {
         populateStationsSelect(selectElement, filteredStations);
     });
 
-    // Auswahl-Event
     selectElement.addEventListener('change', function() {
         const selectedValue = this.value;
-
         if (selectedValue) {
             const chosenStation = filteredStations.find(s => s.Station_ID.toString() === selectedValue);
 
@@ -90,12 +82,9 @@ function initializeStationSelectionUI(markers) {
             if (chosenStation) {
                 const coords = [chosenStation.Latitude, chosenStation.Longitude];
                 console.log('Ausgewählte Station Koordinaten:', coords);
-
-                // Tabelle mit Daten befüllen
                 fillStationDataTable(chosenStation);
             }
         } else {
-            // Keine Auswahl -> Tabelle leeren
             fillStationDataTable({});
         }
     });
@@ -114,7 +103,6 @@ function populateStationsSelect(selectElement, stations) {
     });
 }
 
-// Diese Funktion füllt die Tabelle mit den Daten der gewählten Station
 function fillStationDataTable(stationData) {
     function setTableCellValue(id, value) {
         const cell = document.getElementById(id);
@@ -122,7 +110,7 @@ function fillStationDataTable(stationData) {
             if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
                 cell.innerHTML = "<pre>" + JSON.stringify(value, null, 2) + "</pre>";
             } else {
-                cell.textContent = (value !== null) ? value : '';
+                cell.textContent = (value !== null && value !== undefined) ? value : '';
             }
         }
     }

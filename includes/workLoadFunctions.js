@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let filterForm = document.getElementById('filterForm');
     if (filterForm) {
         filterForm.addEventListener('submit', function (event) {
-            event.preventDefault(); // Verhindert das Standardverhalten des Formulars (Seitenneuladen)
+            event.preventDefault();
 
             const startTime = document.getElementById('von').value;
             const endTime = document.getElementById('bis').value;
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const formDiv = document.getElementById('filterForWorkload');
             if (formDiv) {
-                formDiv.style.display = 'none'; // Formular verstecken
+                formDiv.style.display = 'none';
             }
         });
     }
@@ -181,8 +181,8 @@ function setMarkerColorBasedOnValue(marker, startInPeriod, endInPeriod, buchungs
 
     marker.setPopupContent(
         `<b>${marker.stationData.station_name}</b><br>
-         Startvorgänge: ${startInPeriod}<br>
-         Endvorgänge: ${endInPeriod}<br>
+         Startvorgaenge: ${startInPeriod}<br>
+         Endvorgaenge: ${endInPeriod}<br>
          Differenz: ${difference}`
     );
 }
@@ -201,8 +201,8 @@ function visualizeWorkloadInTotal() {
 
         marker.setPopupContent(
             `<b>${marker.stationData.station_name}</b><br>
-             Startvorgänge: ${marker.stationData.Anzahl_Startvorgaenge}<br>
-             Endvorgänge: ${marker.stationData.Anzahl_Endvorgaenge}<br>
+             Startvorgaenge: ${marker.stationData.Anzahl_Startvorgaenge}<br>
+             Endvorgaenge: ${marker.stationData.Anzahl_Endvorgaenge}<br>
              Differenz: ${difference}`
         );
     });

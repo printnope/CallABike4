@@ -7,7 +7,10 @@
     <meta charset="UTF-8">
     <title>Call A Bike Team 4</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <!-- Leaflet Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="../css/map.css">
 </head>
 <body>
@@ -16,12 +19,11 @@
 <div id="map">
     <div class="legend">
         <h4>Legende</h4>
-        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png');"></i> Entspricht den Schwellenwert<br>
+        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png');"></i> Entspricht dem Schwellenwert<br>
         <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png');"></i> Liegt über dem Schwellenwert<br>
         <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png');"></i> Liegt unter dem Schwellenwert<br>
     </div>
 </div>
-
 
 <!-- Buttons für zusätzliche Funktionen -->
 <div class="button-group">
@@ -29,12 +31,11 @@
     <button onclick="resetMarkers()">Reset</button>
     <button onclick="visualizeWorkloadInTotal()">Visualize Workload</button>
     <button onclick="showSearchStation()">Search for Station</button>
+    <button onclick="startRoutingFromCurrentPosition()">Routing from current position</button>
 </div>
 
 <!-- Div für die Stationssuche, anfänglich ausgeblendet -->
 <div id="searchForStationDiv" style="display: none;">
-    <!-- Die Stationsauswahl wird durch stationsSelector.js hier eingefügt -->
-
     <!-- Tabelle zur Anzeige der Stationsdaten -->
     <table id="stationDataTable" border="1" cellpadding="5" style="margin-top:10px;">
         <thead>
@@ -44,70 +45,21 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>Station_ID</td>
-            <td id="Station_ID"></td>
-        </tr>
-        <tr>
-            <td>station_name</td>
-            <td id="station_name"></td>
-        </tr>
-        <tr>
-            <td>Latitude</td>
-            <td id="Latitude"></td>
-        </tr>
-        <tr>
-            <td>Longitude</td>
-            <td id="Longitude"></td>
-        </tr>
-        <tr>
-            <td>Anzahl Startvorgaenge</td>
-            <td id="Anzahl_Startvorgaenge"></td>
-        </tr>
-        <tr>
-            <td>Anzahl Endvorgaenge</td>
-            <td id="Anzahl_Endvorgaenge"></td>
-        </tr>
-
-
-        <tr>
-            <td>Buchungsportale sortiert nach beliebtheit</td>
-            <td id="Buchungsportale_sortiert"></td>
-        </tr>
-        <tr>
-            <td>Stosszeit</td>
-            <td id="Stosszeit"></td>
-        </tr>
-        <tr>
-            <td>Beliebtester Wochentag</td>
-            <td id="Beliebtester_Wochentag"></td>
-        </tr>
-        <tr>
-            <td>Beliebteste Endstation</td>
-            <td id="Beliebteste_Endstation"></td>
-        </tr>
-
-        <tr>
-            <td>Gesamtzahl Buchungen</td>
-            <td id="Gesamtzahl_Fahrten"></td>
-        </tr>
-
-        <tr>
-            <td>Beliebteste Endstationen nach beliebtheit sortiert</td>
-            <td id="Beliebteste_Endstationen_sortiert"></td>
-        </tr>
-        <tr>
-            <td>Anzahl_Fahrten_pro_Wochentag</td>
-            <td id="Anzahl_Fahrten_pro_Wochentag"></td>
-        </tr>
-        <tr>
-            <td>Anzahl Fahrten pro Wochentag und Stunde</td>
-            <td id="Anzahl_Fahrten_pro_Wochentag_und_Stunde"></td>
-        </tr>
-        <tr>
-            <td>Buchungsportale pro_Wochentag und_Stunde</td>
-            <td id="Buchungsportale_pro_Wochentag_und_Stunde"></td>
-        </tr>
+        <tr><td>Station_ID</td><td id="Station_ID"></td></tr>
+        <tr><td>station_name</td><td id="station_name"></td></tr>
+        <tr><td>Latitude</td><td id="Latitude"></td></tr>
+        <tr><td>Longitude</td><td id="Longitude"></td></tr>
+        <tr><td>Anzahl Startvorgaenge</td><td id="Anzahl_Startvorgaenge"></td></tr>
+        <tr><td>Anzahl Endvorgaenge</td><td id="Anzahl_Endvorgaenge"></td></tr>
+        <tr><td>Buchungsportale sortiert nach beliebtheit</td><td id="Buchungsportale_sortiert"></td></tr>
+        <tr><td>Stosszeit</td><td id="Stosszeit"></td></tr>
+        <tr><td>Beliebtester Wochentag</td><td id="Beliebtester_Wochentag"></td></tr>
+        <tr><td>Beliebteste Endstation</td><td id="Beliebteste_Endstation"></td></tr>
+        <tr><td>Gesamtzahl Buchungen</td><td id="Gesamtzahl_Fahrten"></td></tr>
+        <tr><td>Beliebteste Endstationen nach beliebtheit sortiert</td><td id="Beliebteste_Endstationen_sortiert"></td></tr>
+        <tr><td>Anzahl_Fahrten_pro_Wochentag</td><td id="Anzahl_Fahrten_pro_Wochentag"></td></tr>
+        <tr><td>Anzahl Fahrten pro Wochentag und Stunde</td><td id="Anzahl_Fahrten_pro_Wochentag_und_Stunde"></td></tr>
+        <tr><td>Buchungsportale pro_Wochentag und_Stunde</td><td id="Buchungsportale_pro_Wochentag_und_Stunde"></td></tr>
         </tbody>
     </table>
 </div>
@@ -195,15 +147,16 @@
 
 <!-- Skripte -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 <script src="../includes/initMap.js"></script>
 <script src="../includes/workLoadFunctions.js"></script>
 <script src="../includes/stationsSelector.js"></script>
+<script src="../includes/routingFromCurrentPosition.js"></script>
 <script>
     function showFilterForm() {
         const filterDiv = document.getElementById('filterForWorkload');
         const searchDiv = document.getElementById('searchForStationDiv');
         if (filterDiv && searchDiv) {
-            // Filter anzeigen, Suche ausblenden
             filterDiv.style.display = 'block';
             searchDiv.style.display = 'none';
         }
@@ -213,7 +166,6 @@
         const filterDiv = document.getElementById('filterForWorkload');
         const searchDiv = document.getElementById('searchForStationDiv');
         if (filterDiv && searchDiv) {
-            // Suche anzeigen, Filter ausblenden
             searchDiv.style.display = 'block';
             filterDiv.style.display = 'none';
         }

@@ -47,32 +47,26 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 fetch(pathToJson)
     .then(response => response.json())
     .then(data => {
-        console.log(`Lade ${data.length} Stationen.`); // Debugging
+        console.log(`Lade ${data.length} Stationen.`);
 
         data.forEach(station => {
-            // Marker mit Standard-Icon erstellen
             let marker = L.marker([station.Latitude, station.Longitude], { icon: window.defaultIcon }).addTo(map);
 
-            // Stationsdaten dem Marker hinzufügen
             marker.stationData = station;
 
-            // Berechne die Differenz zwischen Start- und Endvorgängen
             let difference = station.Anzahl_Startvorgaenge - station.Anzahl_Endvorgaenge;
 
-            // Popup hinzufügen
             marker.bindPopup(
                 `<b>${station.station_name}</b><br>
-                 Startvorgänge: ${station.Anzahl_Startvorgaenge}<br>
-                 Endvorgänge: ${station.Anzahl_Endvorgaenge}<br>
+                 Startvorgaenge: ${station.Anzahl_Startvorgaenge}<br>
+                 Endvorgaenge: ${station.Anzahl_Endvorgaenge}<br>
                  Differenz: ${difference}`
             );
 
-            // Marker dem Array hinzufügen
             window.markerArray.push(marker);
         });
 
-        console.log(`Marker wurden geladen: ${window.markerArray.length}`); // Debugging
-
+        console.log(`Marker wurden geladen: ${window.markerArray.length}`);
     })
     .catch(error => console.error('Fehler beim Laden der Stationsdaten:', error));
 
@@ -80,17 +74,15 @@ fetch(pathToJson)
 function resetMarkers(){
     let allMarkers = window.markerArray;
     allMarkers.forEach(marker => {
-        marker.setIcon(window.defaultIcon); // Standard-Icon setzen
-        marker.setOpacity(1); // Sichtbar machen
+        marker.setIcon(window.defaultIcon);
+        marker.setOpacity(1);
 
-        // Berechne die Differenz zwischen Start- und Endvorgängen
         let difference = marker.stationData.Anzahl_Startvorgaenge - marker.stationData.Anzahl_Endvorgaenge;
 
-        // Aktualisiere das Popup
         marker.setPopupContent(
             `<b>${marker.stationData.station_name}</b><br>
-             Startvorgänge: ${marker.stationData.Anzahl_Startvorgaenge}<br>
-             Endvorgänge: ${marker.stationData.Anzahl_Endvorgaenge}<br>
+             Startvorgaenge: ${marker.stationData.Anzahl_Startvorgaenge}<br>
+             Endvorgaenge: ${marker.stationData.Anzahl_Endvorgaenge}<br>
              Differenz: ${difference}`
         );
     });
