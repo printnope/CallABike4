@@ -32,13 +32,13 @@
     <button onclick="visualizeWorkloadInTotal()">Visualize Workload</button>
     <button onclick="showSearchStation()">Search for Station</button>
     <button onclick="startRoutingFromCurrentPosition()">Routing from current position</button>
-    <!-- NEUER BUTTON -->
     <button onclick="showAddressSearch()">Routing from address</button>
+    <!-- Button für Flow Lines -->
+    <button onclick="showFlowLinesForm()">Show Flow Lines</button>
 </div>
 
-<!-- Div für die Stationssuche, anfänglich ausgeblendet -->
+<!-- Div für die Stationssuche -->
 <div id="searchForStationDiv" style="display: none;">
-    <!-- Tabelle zur Anzeige der Stationsdaten -->
     <table id="stationDataTable" border="1" cellpadding="5" style="margin-top:10px;">
         <thead>
         <tr>
@@ -55,18 +55,18 @@
         <tr><td>Anzahl Endvorgaenge</td><td id="Anzahl_Endvorgaenge"></td></tr>
         <tr><td>Buchungsportale sortiert nach beliebtheit</td><td id="Buchungsportale_sortiert"></td></tr>
         <tr><td>Stosszeit</td><td id="Stosszeit"></td></tr>
-        <tr><td>Beliebtester Wochentag</td><td id="Beliebtester_Wochentag"></td></tr>
-        <tr><td>Beliebteste Endstation</td><td id="Beliebteste_Endstation"></td></tr>
-        <tr><td>Gesamtzahl Buchungen</td><td id="Gesamtzahl_Fahrten"></td></tr>
-        <tr><td>Beliebteste Endstationen nach beliebtheit sortiert</td><td id="Beliebteste_Endstationen_sortiert"></td></tr>
+        <tr><td>Beliebtester_Wochentag</td><td id="Beliebtester_Wochentag"></td></tr>
+        <tr><td>Beliebteste_Endstation</td><td id="Beliebteste_Endstation"></td></tr>
+        <tr><td>Gesamtzahl_Fahrten</td><td id="Gesamtzahl_Fahrten"></td></tr>
+        <tr><td>Beliebteste_Endstationen_sortiert</td><td id="Beliebteste_Endstationen_sortiert"></td></tr>
         <tr><td>Anzahl_Fahrten_pro_Wochentag</td><td id="Anzahl_Fahrten_pro_Wochentag"></td></tr>
-        <tr><td>Anzahl Fahrten pro Wochentag und Stunde</td><td id="Anzahl_Fahrten_pro_Wochentag_und_Stunde"></td></tr>
-        <tr><td>Buchungsportale pro_Wochentag und_Stunde</td><td id="Buchungsportale_pro_Wochentag_und_Stunde"></td></tr>
+        <tr><td>Anzahl_Fahrten_pro_Wochentag_und_Stunde</td><td id="Anzahl_Fahrten_pro_Wochentag_und_Stunde"></td></tr>
+        <tr><td>Buchungsportale_pro_Wochentag_und_Stunde</td><td id="Buchungsportale_pro_Wochentag_und_Stunde"></td></tr>
         </tbody>
     </table>
 </div>
 
-<!-- Formular für Benutzereingaben (Filter) -->
+<!-- Formular für Workload-Filter -->
 <div id="filterForWorkload" style="display: none;">
     <form id="filterForm">
         <!-- Wochentage Auswahl -->
@@ -147,6 +147,22 @@
     </form>
 </div>
 
+<!-- Formular für Flow Lines Filter -->
+<div id="filterForFlowLines" style="display: none; margin-top:10px;">
+    <form id="flowLinesForm">
+        <fieldset>
+            <legend>Stationen auswählen</legend>
+            <p>Wählen Sie eine oder mehrere Startstationen aus.</p>
+            <select id="selectedStations" name="selectedStations" multiple style="width:200px;"></select>
+        </fieldset>
+        <fieldset>
+            <legend>Anzahl Top-Endstationen</legend>
+            <p>Wie viele der beliebtesten Endstationen sollen angezeigt werden? (z. B. Top 5)</p>
+            <input type="number" id="topN" name="topN" value="5" min="1" style="width:60px;">
+        </fieldset>
+        <button type="submit">Linien anzeigen</button>
+    </form>
+</div>
 
 <!-- NEUES DIV für die Adress-Suche -->
 <div id="addressSearchDiv" style="display:none; margin-top:10px;">
@@ -154,8 +170,6 @@
     <button onclick="searchAddressForRouting()">Adresse suchen</button>
 </div>
 
-
-<!-- Skripte -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 <script src="../includes/initMap.js"></script>
@@ -163,43 +177,47 @@
 <script src="../includes/stationsSelector.js"></script>
 <script src="../includes/routingFromCurrentPosition.js"></script>
 <script src="../includes/adressSearchRouting.js"></script>
+<script src="../includes/flowLinesFunctions.js"></script>
 <script>
     function showFilterForm() {
-        resetMarkers()
-        const filterDiv = document.getElementById('filterForWorkload');
-        const searchDiv = document.getElementById('searchForStationDiv');
-        const addressDiv = document.getElementById('addressSearchDiv');
-        if (filterDiv && searchDiv && addressDiv) {
-            filterDiv.style.display = 'block';
-            searchDiv.style.display = 'none';
-            addressDiv.style.display = 'none';
-        }
+        resetMarkers();
+        toggleDisplay('filterForWorkload', true);
+        toggleDisplay('searchForStationDiv', false);
+        toggleDisplay('addressSearchDiv', false);
+        toggleDisplay('filterForFlowLines', false);
     }
 
     function showSearchStation() {
-        resetMarkers()
-        const filterDiv = document.getElementById('filterForWorkload');
-        const searchDiv = document.getElementById('searchForStationDiv');
-        const addressDiv = document.getElementById('addressSearchDiv');
-        if (filterDiv && searchDiv && addressDiv) {
-            searchDiv.style.display = 'block';
-            filterDiv.style.display = 'none';
-            addressDiv.style.display = 'none';
-        }
+        resetMarkers();
+        toggleDisplay('filterForWorkload', false);
+        toggleDisplay('searchForStationDiv', true);
+        toggleDisplay('addressSearchDiv', false);
+        toggleDisplay('filterForFlowLines', false);
     }
 
-    // NEUE FUNKTION zum Anzeigen der Adresssuche
     function showAddressSearch() {
         resetMarkers();
-        const filterDiv = document.getElementById('filterForWorkload');
-        const searchDiv = document.getElementById('searchForStationDiv');
-        const addressDiv = document.getElementById('addressSearchDiv');
-        if (filterDiv && searchDiv && addressDiv) {
-            addressDiv.style.display = 'block';
-            filterDiv.style.display = 'none';
-            searchDiv.style.display = 'none';
-        }
+        toggleDisplay('filterForWorkload', false);
+        toggleDisplay('searchForStationDiv', false);
+        toggleDisplay('addressSearchDiv', true);
+        toggleDisplay('filterForFlowLines', false);
     }
+
+    function showFlowLinesForm() {
+        resetMarkers();
+        populateStationsSelect();
+        toggleDisplay('filterForWorkload', false);
+        toggleDisplay('searchForStationDiv', false);
+        toggleDisplay('addressSearchDiv', false);
+        toggleDisplay('filterForFlowLines', true);
+    }
+
+    function toggleDisplay(id, show) {
+        const elem = document.getElementById(id);
+        if (!elem) return;
+        elem.style.display = show ? 'block' : 'none';
+    }
+
 </script>
 
 <?php

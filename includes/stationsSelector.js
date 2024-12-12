@@ -1,5 +1,3 @@
-// stationsSelector.js
-
 // Warte bis markerArray verfügbar ist
 document.addEventListener('DOMContentLoaded', () => {
     let checkInterval = setInterval(() => {

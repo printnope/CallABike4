@@ -43,11 +43,15 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
 }).addTo(map);
 
+// Globale Variable für Stationsdaten
+window.stationsData = [];
+
 // Lade die JSON-Datei und erstelle Marker
 fetch(pathToJson)
     .then(response => response.json())
     .then(data => {
         console.log(`Lade ${data.length} Stationen.`);
+        window.stationsData = data;
 
         data.forEach(station => {
             let marker = L.marker([station.Latitude, station.Longitude], { icon: window.defaultIcon }).addTo(map);
@@ -67,16 +71,25 @@ fetch(pathToJson)
         });
 
         console.log(`Marker wurden geladen: ${window.markerArray.length}`);
+
+        // Stationen-Index nach Name aufbauen für FlowLines
+        window.stationIndexByName = {};
+        data.forEach(st => {
+            stationIndexByName[st.station_name] = {
+                lat: st.Latitude,
+                lng: st.Longitude
+            };
+        });
     })
     .catch(error => console.error('Fehler beim Laden der Stationsdaten:', error));
 
 // Funktion zum Zurücksetzen der Marker
 function resetMarkers(){
-    if (routeControl) {
+    if (typeof routeControl !== 'undefined' && routeControl) {
         window.map.removeControl(routeControl);
         window.map.removeLayer(window.userMarker);
     }
-    if (routeControlFromAddress){
+    if (typeof routeControlFromAddress !== 'undefined' && routeControlFromAddress){
         window.map.removeControl(routeControlFromAddress);
         window.map.removeLayer(addressMarker);
     }
@@ -95,4 +108,12 @@ function resetMarkers(){
              Differenz: ${difference}`
         );
     });
+
+    // Falls Flow-Linien vorhanden sind, entfernen
+    if (window.drawnFlowLines && window.drawnFlowLines.length > 0) {
+        window.drawnFlowLines.forEach(line => {
+            window.map.removeLayer(line);
+        });
+        window.drawnFlowLines = [];
+    }
 }
