@@ -205,7 +205,7 @@
 
     function showFlowLinesForm() {
         resetMarkers();
-        populateStationsSelect();
+        populateStationsSelectFlowLines();
         toggleDisplay('filterForWorkload', false);
         toggleDisplay('searchForStationDiv', false);
         toggleDisplay('addressSearchDiv', false);
@@ -216,6 +216,25 @@
         const elem = document.getElementById(id);
         if (!elem) return;
         elem.style.display = show ? 'block' : 'none';
+    }
+
+
+
+    function populateStationsSelectFlowLines() {
+        const select = document.getElementById('selectedStations');
+        if (!select) return;
+
+        // Alte Optionen entfernen
+        while (select.firstChild) {
+            select.removeChild(select.firstChild);
+        }
+
+        window.stationsData.forEach(st => {
+            const option = document.createElement('option');
+            option.value = st.station_name;
+            option.textContent = st.station_name;
+            select.appendChild(option);
+        });
     }
 
 </script>
