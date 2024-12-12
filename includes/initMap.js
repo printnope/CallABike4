@@ -1,5 +1,3 @@
-// initMap.js
-
 // Initialisiere das Marker-Array im globalen Scope
 window.markerArray = [];
 

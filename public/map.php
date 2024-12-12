@@ -1,5 +1,4 @@
 <?php
-// map.php
 ?>
 <!DOCTYPE html>
 <html lang="de">

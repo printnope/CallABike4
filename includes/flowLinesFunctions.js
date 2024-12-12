@@ -1,4 +1,3 @@
-// flowLinesFunctions.js
 
 document.addEventListener('DOMContentLoaded', function() {
     const flowLinesForm = document.getElementById('flowLinesForm');

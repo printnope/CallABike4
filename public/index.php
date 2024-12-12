@@ -32,11 +32,7 @@ if (!file_exists($pathToJsonFile) || (time() - filemtime($pathToJsonFile)) > 360
     echo "createJson.php existiert bereits.<br>";
 }
 
-
 header("Location: map.php");
 exit();
-
-
-
 
 ?>
