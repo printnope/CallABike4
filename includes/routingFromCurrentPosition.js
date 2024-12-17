@@ -109,12 +109,6 @@ function recalculateRoute() {
     // Bei jeder Verschiebung des Markers wird die nächste Station neu gesucht
     const userPos = userMarker.getLatLng();
     nearestStation = findNearestStation(userPos.lat, userPos.lng);
-
-    if (!nearestStation) {
-        alert("Keine Stationen gefunden.");
-        return;
-    }
-
     hideAllStationsExcept(nearestStation);
     createOrUpdateRoute();
 }

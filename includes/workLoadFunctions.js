@@ -120,7 +120,6 @@ function getStartEndInPeriod(stationData, weekdays, startTime, endTime, selected
             }
         }
     });
-
     return {startInPeriod, endInPeriod};
 }
 
