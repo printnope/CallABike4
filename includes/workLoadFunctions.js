@@ -55,7 +55,6 @@ function filterMarkersByCriteria(startTime, endTime, weekdays, buchungstyp, thre
             (buchungstyp === 'abgabe' && endInPeriod > 0);
 
         if (selectedPortals.length > 0 && totalInPeriod === 0) {
-            // Wenn Portale ausgewählt, aber keine Buchungen in diesem Zeitraum
             marker.setOpacity(0);
         } else if (totalInPeriod > 0 && isBuchungstypMatch) {
             marker.setOpacity(1);
@@ -96,7 +95,6 @@ function getStartEndInPeriod(stationData, weekdays, startTime, endTime, selected
         }
 
         if (selectedPortals.length > 0) {
-            // Nur gewählte Portale zählen
             selectedPortals.forEach(portal => {
                 const pd = portalDataForHour[portal];
                 if (pd && buchungstypFilterMatch(buchungstyp, pd)) {
@@ -105,8 +103,6 @@ function getStartEndInPeriod(stationData, weekdays, startTime, endTime, selected
                 }
             });
         } else {
-            // Alle Portale zählen
-            // Hier zählt man einfach die Summe je nach Buchungstyp
             if (buchungstyp === 'abholung') {
                 hourStart += stundenDataForHour.Anzahl_Startvorgaenge;
             } else if (buchungstyp === 'abgabe') {
@@ -122,7 +118,6 @@ function getStartEndInPeriod(stationData, weekdays, startTime, endTime, selected
 
     weekdays.forEach(wochentagLang => {
         if (wochentagLang.toLowerCase() === 'alle') {
-            // Alle Wochentage (Mo-So)
             ['Mo','Di','Mi','Do','Fr','Sa','So'].forEach(wochentagKurz => {
                 processWeekday(wochentagKurz);
             });

@@ -31,7 +31,6 @@
     <button onclick="startRoutingFromCurrentPosition()">Routing from current position</button>
     <button onclick="showAddressSearch()">Routing from address</button>
     <button onclick="showFlowLinesForm()">Show Flow Lines</button>
-    <!-- Neuer Button zum Anzeigen der Charts -->
     <button onclick="toggleChartsDisplay()">Show Charts</button>
 </div>
 
@@ -158,10 +157,8 @@
     <button onclick="searchAddressForRouting()">Adresse suchen</button>
 </div>
 
-<!-- Bereich für die Charts -->
 <div id="chartsContainer" style="display:none; margin-top:20px;">
     <h2>Charts</h2>
-    <!-- Neues Formular für die Chart-Filterung -->
     <div id="chartFilterFormContainer">
         <form id="chartFilterForm" style="margin-bottom:20px;">
             <fieldset>
@@ -240,7 +237,6 @@
     <div id="lineChartContainer" style="width:50%; display:inline-block; vertical-align:top;"></div>
 </div>
 
-<!-- Scripts -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -251,7 +247,6 @@
 <script src="../includes/adressSearchRouting.js"></script>
 <script src="../includes/flowLinesFunctions.js"></script>
 <script src="../includes/chartFunctions.js"></script>
-
 <script>
     function showFilterForm() {
         resetMarkers();
@@ -269,6 +264,10 @@
         toggleDisplay('addressSearchDiv', false);
         toggleDisplay('filterForFlowLines', false);
         document.getElementById('chartsContainer').style.display = 'none';
+
+        if (window.markerArray && window.markerArray.length > 0) {
+            initializeStationSelectionUI(window.markerArray);
+        }
     }
 
     function showAddressSearch() {
@@ -282,7 +281,7 @@
 
     function showFlowLinesForm() {
         resetMarkers();
-        populateStationsSelectFlowLines();
+        populateStationsSelectFlowLines(); // Hier wird wieder station_name als value genutzt
         toggleDisplay('filterForWorkload', false);
         toggleDisplay('searchForStationDiv', false);
         toggleDisplay('addressSearchDiv', false);
@@ -298,24 +297,30 @@
 
     function toggleChartsDisplay(){
         const container = document.getElementById('chartsContainer');
-        if (container.style.display === 'none' || container.style.display==='') {
-            container.style.display = 'block';
-        } else {
-            container.style.display = 'none';
-        }
+        container.style.display = (container.style.display === 'none' || container.style.display==='') ? 'block' : 'none';
     }
 
+    // Angepasste Funktion, um wieder station_name als value zu nutzen
     function populateStationsSelectFlowLines() {
         const select = document.getElementById('selectedStations');
         if (!select) return;
 
+        // Vorhandene Optionen entfernen
         while (select.firstChild) {
             select.removeChild(select.firstChild);
         }
 
-        window.stationsData.forEach(st => {
+        // Standardoption
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = '-- Bitte eine Station wählen --';
+        select.appendChild(defaultOption);
+
+        // Stationen hinzufügen - Wieder station_name verwenden
+        const allStations = window.stationsData || [];
+        allStations.forEach(st => {
             const option = document.createElement('option');
-            option.value = st.station_name;
+            option.value = st.station_name; // hier wieder station_name
             option.textContent = st.station_name;
             select.appendChild(option);
         });

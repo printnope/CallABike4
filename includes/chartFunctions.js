@@ -1,18 +1,15 @@
 // chartFunctions.js
 // Handhabt die Chart-Logik separat vom Marker-Filter.
 
-// Globale Variablen für Charts
 let pieChart;
 let lineChart;
 let lastChartAggregatedData = null;
 
-// Nach Laden des DOM das chartFilterForm initialisieren
 document.addEventListener('DOMContentLoaded', function() {
     const chartFilterForm = document.getElementById('chartFilterForm');
     if(chartFilterForm) {
         chartFilterForm.addEventListener('submit', function(e){
             e.preventDefault();
-            // Parameter auslesen
             const mode = document.querySelector('input[name="zeitraumModus"]:checked').value;
             const wochentageCB = document.querySelectorAll('input[name="wochentage"]:checked');
             let weekdays = Array.from(wochentageCB).map(cb => cb.value);
@@ -27,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const portalCB = document.querySelectorAll('input[name="chartBuchungsportale"]:checked');
             const selectedPortals = Array.from(portalCB).map(cb => cb.value);
 
-            // Aggregation durchführen
             const aggregatedData = aggregateDataForCharts(window.stationsData, chartVon, chartBis, weekdays, buchungstyp, selectedPortals);
             lastChartAggregatedData = {mode: mode, data: aggregatedData};
             updateCharts(lastChartAggregatedData);
@@ -54,13 +50,11 @@ function aggregateDataForCharts(stationsData, startTime, endTime, weekdays, buch
     stationsData.forEach(stationData => {
         const {startInPeriod, endInPeriod, portalCounts, hourData} = getStartEndInPeriodForCharts(stationData, weekdays, startTime, endTime, selectedPortals, buchungstyp);
 
-        // Portale summieren
         for (let p in portalCounts) {
             if (!aggregatedPortalCounts[p]) aggregatedPortalCounts[p] = 0;
             aggregatedPortalCounts[p] += portalCounts[p];
         }
 
-        // Zeitdaten summieren
         usedWeekdays.forEach(wd => {
             if (hourData[wd]) {
                 for (let h=0; h<24; h++) {
@@ -207,7 +201,6 @@ function updateCharts(chartConfig) {
         return;
     }
 
-    // Pie-Daten
     const portalDataArray = [];
     let totalPortalCount = 0;
     for(let p in data.portals) {
@@ -218,7 +211,6 @@ function updateCharts(chartConfig) {
         portalDataArray.push({name: p, y: perc});
     }
 
-    // Line-Daten
     let lineCategories = [];
     let lineData = [];
     if(mode === 'stunden') {
