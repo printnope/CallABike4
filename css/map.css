@@ -1,4 +1,3 @@
-
 #map {
     height: 500px;
     width: 100%;
@@ -14,19 +13,23 @@ form {
     max-width: 600px;
     background-color: #f9f9f9;
 }
+
 label {
     display: block;
     margin-top: 10px;
 }
+
 fieldset {
     margin-top: 10px;
     padding: 10px;
     border: 1px solid #ccc;
 }
+
 .checkbox-group, .radio-group, .time-select, .threshold-group {
     display: flex;
     flex-direction: column;
 }
+
 button {
     margin: 5px 5px 5px 0;
     padding: 10px 15px;
@@ -36,15 +39,19 @@ button {
     color: white;
     cursor: pointer;
 }
+
 button:hover {
     background-color: #0056b3;
 }
+
 .submit-btn {
     background-color: #28a745;
 }
+
 .submit-btn:hover {
     background-color: #218838;
 }
+
 /* Legende Styling */
 .legend {
     background: white;
@@ -59,6 +66,7 @@ button:hover {
     z-index: 1000;
     opacity: 0.9; /* Leicht transparent */
 }
+
 .legend i {
     width: 18px;
     height: 18px;
@@ -70,6 +78,7 @@ button:hover {
     background-position: center;
     display: inline-block;
 }
+
 /* Formular standardmäßig verstecken */
 #filterForWorkload {
     display: none;
@@ -78,6 +87,43 @@ button:hover {
 .button-group {
     margin: 20px;
 }
+
 .button-group button {
     margin-right: 10px;
+}
+
+/* Charts-Container ist nun eine Spalte */
+#chartsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px;
+}
+
+/* Innerer Container für Form links und Diagramme rechts */
+#chartsInner {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+/* Bereich für das Chart-Filter-Formular (links) */
+#chartFilterFormContainer {
+    flex: 0 0 auto;
+    max-width: 300px;
+}
+
+/* Container für die Diagramme (rechts, untereinander) */
+#diagramsContainer {
+    display: flex;
+    flex-direction: column;  /* Diagramme untereinander */
+    flex: 1 1 auto;
+    gap: 20px;               /* Abstand zwischen den Diagrammen */
+    min-width: 200px;
+}
+
+/* Diagramm-Container übernehmen jetzt die volle Breite im column layout */
+#pieChartContainer,
+#lineChartContainer {
+    width: 100%;
 }

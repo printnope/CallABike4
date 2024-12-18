@@ -1,16 +1,13 @@
-// Warte bis markerArray verfügbar ist
-document.addEventListener('DOMContentLoaded', () => {
-    let checkInterval = setInterval(() => {
-        if (window.markerArray && window.markerArray.length > 0) {
-            clearInterval(checkInterval);
-            initializeStationSelectionUI(window.markerArray);
-        }
-    }, 200);
-});
+// stationsSelector.js
+// Diese Version initialisiert die Stationsauswahl NUR wenn "Search for Station" gedrückt wird.
+// Der zuvor verwendete DOMContentLoaded und das Intervall wurden entfernt.
 
 function initializeStationSelectionUI(markers) {
     const searchDiv = document.getElementById('searchForStationDiv');
     if (!searchDiv) return;
+
+    // Nur einmal ausführen
+    if (document.getElementById('stations-select-container')) return;
 
     const container = document.createElement('div');
     container.id = 'stations-select-container';

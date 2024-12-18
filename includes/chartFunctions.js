@@ -1,5 +1,6 @@
 // chartFunctions.js
 // Handhabt die Chart-Logik separat vom Marker-Filter.
+// Angepasst: Anstatt akkumulierten Gesamtzahlen werden nun Durchschnittswerte pro Station dargestellt.
 
 let pieChart;
 let lineChart;
@@ -50,11 +51,13 @@ function aggregateDataForCharts(stationsData, startTime, endTime, weekdays, buch
     stationsData.forEach(stationData => {
         const {startInPeriod, endInPeriod, portalCounts, hourData} = getStartEndInPeriodForCharts(stationData, weekdays, startTime, endTime, selectedPortals, buchungstyp);
 
+        // Akkumulieren der Portalcounts
         for (let p in portalCounts) {
             if (!aggregatedPortalCounts[p]) aggregatedPortalCounts[p] = 0;
             aggregatedPortalCounts[p] += portalCounts[p];
         }
 
+        // Akkumulieren der Zeitdaten
         usedWeekdays.forEach(wd => {
             if (hourData[wd]) {
                 for (let h=0; h<24; h++) {
@@ -68,6 +71,24 @@ function aggregateDataForCharts(stationsData, startTime, endTime, weekdays, buch
             }
         });
     });
+
+    // Jetzt von Summe auf Durchschnitt pro Station umrechnen
+    const stationCount = stationsData.length;
+    // Durchschnitt für Portalcounts
+    for (let p in aggregatedPortalCounts) {
+        aggregatedPortalCounts[p] /= stationCount;
+    }
+
+    // Durchschnitt für Zeitdaten
+    for (let wd in aggregatedTimeData) {
+        for (let h=0; h<24; h++) {
+            aggregatedTimeData[wd][h].start /= stationCount;
+            aggregatedTimeData[wd][h].end /= stationCount;
+            for (let pp in aggregatedTimeData[wd][h].portals) {
+                aggregatedTimeData[wd][h].portals[pp] /= stationCount;
+            }
+        }
+    }
 
     return {
         portals: aggregatedPortalCounts,
@@ -214,6 +235,7 @@ function updateCharts(chartConfig) {
     let lineCategories = [];
     let lineData = [];
     if(mode === 'stunden') {
+        // Durchschnitt pro Stunde (über alle Stationen)
         let summedHours = [];
         for(let h=0;h<24;h++){
             let total = 0;
@@ -225,6 +247,7 @@ function updateCharts(chartConfig) {
         }
         lineData = summedHours;
     } else {
+        // Durchschnitt pro Tag (über alle Stationen)
         data.weekdays.forEach(wd => {
             let total=0;
             for(let h=0;h<24;h++){
@@ -266,24 +289,28 @@ function createOrUpdateLineChart(categories, data) {
                 type: 'line'
             },
             title: {
-                text: 'Auslastung der Buchungen'
+                text: 'Auslastung der Buchungen (Durchschnitt über alle Stationen)'
             },
             xAxis: {
                 categories: categories
             },
             yAxis: {
                 title: {
-                    text: 'Anzahl Buchungen'
+                    text: 'Anzahl Buchungen (Durchschnitt)'
                 }
             },
             series: [{
-                name: 'Gesamt',
+                name: 'Durchschnitt (alle Stationen)',
                 data: data
             }]
         });
     } else {
         lineChart.xAxis[0].setCategories(categories, false);
-        lineChart.series[0].setData(data, true);
+        // Aktualisieren der bestehenden Serie mit neuen Durchschnittswerten
+        lineChart.series[0].update({
+            name: 'Durchschnitt (alle Stationen)',
+            data: data
+        }, true);
     }
 }
 
@@ -307,48 +334,60 @@ function highlightStationOnChart(){
 
     const {hourData} = getStationHourDataForCharts(stationObj, weekdaysForm.length>0?weekdaysForm:['alle'], startTime, endTime, selectedPortals, buchungstyp);
 
+    // Entferne eine eventuell bereits vorhandene Serie dieser Station, um doppelte Linien zu vermeiden
+    let existingSeriesIndex = lineChart.series.findIndex(s => s.name === stationName);
+    if (existingSeriesIndex !== -1) {
+        lineChart.series[existingSeriesIndex].remove(false);
+    }
+
     if(modeVal==='stunden') {
-        let sumAll=0;
+        // Stundenweise Darstellung
+        let categories = lineChart.xAxis[0].categories; // h:00
+        let stationDataArray = [];
+
         const usedWeekdays = weekdaysForm.includes('alle')? ['Mo','Di','Mi','Do','Fr','Sa','So'] :
             ['Mo','Di','Mi','Do','Fr','Sa','So'].filter(wd => weekdaysForm.map(w=>getKurzWochentag(w)).includes(wd));
 
-        usedWeekdays.forEach(wd => {
-            for (let h=0; h<24; h++){
-                sumAll += hourData[wd][h].start + hourData[wd][h].end;
-            }
-        });
-        let categories = lineChart.xAxis[0].categories;
-        let idx = Math.floor(categories.length/2);
+        for (let h = 0; h < 24; h++) {
+            let sumHour = 0;
+            usedWeekdays.forEach(wd => {
+                sumHour += hourData[wd][h].start + hourData[wd][h].end;
+            });
+            stationDataArray.push(sumHour);
+        }
 
-        lineChart.series[0].addPoint({
-            x: idx,
-            y: sumAll,
+        // Neue Serie für diese Station
+        lineChart.addSeries({
             name: stationName,
+            data: stationDataArray,
+            color: '#ff0000',
             marker: {
-                symbol: 'circle',
-                radius: 6,
-                fillColor: '#ff0000'
+                symbol: 'circle'
             }
         }, true);
 
     } else {
-        let categories = lineChart.xAxis[0].categories;
-        categories.forEach((wd, i) => {
+        // Tagesweise Darstellung
+        let categories = lineChart.xAxis[0].categories; // Wochentage
+        let stationDataArray = [];
+
+        categories.forEach((wd) => {
             let total=0;
             for(let h=0;h<24;h++){
                 total+=hourData[wd][h].start + hourData[wd][h].end;
             }
-            lineChart.series[0].addPoint({
-                x: i,
-                y: total,
-                name: stationName,
-                marker: {
-                    symbol: 'circle',
-                    radius: 6,
-                    fillColor: '#ff0000'
-                }
-            }, true);
+            stationDataArray.push(total);
         });
+
+        // Neue Serie für diese Station
+        lineChart.addSeries({
+            name: stationName,
+            data: stationDataArray,
+            color: '#ff0000',
+            marker: {
+                symbol: 'circle'
+            }
+        }, true);
     }
 }
 

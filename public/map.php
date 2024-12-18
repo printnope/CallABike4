@@ -6,10 +6,16 @@
     <meta charset="UTF-8">
     <title>Call A Bike Team 4</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
     <!-- Leaflet Routing Machine CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <!-- Leaflet Control Geocoder CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+    <!-- Highcharts (für Charts) wird per JS eingebunden -->
+
     <link rel="stylesheet" href="../css/map.css">
 </head>
 <body>
@@ -34,6 +40,7 @@
     <button onclick="toggleChartsDisplay()">Show Charts</button>
 </div>
 
+<!-- Stationssuche -->
 <div id="searchForStationDiv" style="display: none;">
     <table id="stationDataTable" border="1" cellpadding="5" style="margin-top:10px;">
         <thead>
@@ -62,6 +69,7 @@
     </table>
 </div>
 
+<!-- Filter Gesamtzahlen -->
 <div id="filterForWorkload" style="display: none;">
     <form id="filterForm">
         <fieldset>
@@ -136,6 +144,7 @@
     </form>
 </div>
 
+<!-- Flow Lines Formular -->
 <div id="filterForFlowLines" style="display: none; margin-top:10px;">
     <form id="flowLinesForm">
         <fieldset>
@@ -152,93 +161,103 @@
     </form>
 </div>
 
+<!-- Adress-Suche (Routing von Adresse) -->
 <div id="addressSearchDiv" style="display:none; margin-top:10px;">
     <input type="text" id="addressInput" placeholder="Adresse eingeben..." style="width:200px;">
     <button onclick="searchAddressForRouting()">Adresse suchen</button>
 </div>
 
-<div id="chartsContainer" style="display:none; margin-top:20px;">
+<!-- Charts Container mit Titel, Form links und Diagrammen rechts -->
+<div id="chartsContainer" style="display:none;">
     <h2>Charts</h2>
-    <div id="chartFilterFormContainer">
-        <form id="chartFilterForm" style="margin-bottom:20px;">
-            <fieldset>
-                <legend>Zeitraum-Modus</legend>
-                <label><input type="radio" name="zeitraumModus" value="stunden" checked> Stundenweise Darstellung</label>
-                <label><input type="radio" name="zeitraumModus" value="tage"> Tagesweise Darstellung</label>
-            </fieldset>
+    <div id="chartsInner">
+        <div id="chartFilterFormContainer">
+            <form id="chartFilterForm" style="margin-bottom:20px;">
+                <fieldset>
+                    <legend>Zeitraum-Modus</legend>
+                    <label><input type="radio" name="zeitraumModus" value="stunden" checked> Stundenweise Darstellung</label>
+                    <label><input type="radio" name="zeitraumModus" value="tage"> Tagesweise Darstellung</label>
+                </fieldset>
 
-            <fieldset>
-                <legend>Wochentage auswählen</legend>
-                <div class="checkbox-group">
-                    <label><input type="checkbox" name="wochentage" value="alle" checked> Alle</label>
-                    <label><input type="checkbox" name="wochentage" value="montag"> Montag</label>
-                    <label><input type="checkbox" name="wochentage" value="dienstag"> Dienstag</label>
-                    <label><input type="checkbox" name="wochentage" value="mittwoch"> Mittwoch</label>
-                    <label><input type="checkbox" name="wochentage" value="donnerstag"> Donnerstag</label>
-                    <label><input type="checkbox" name="wochentage" value="freitag"> Freitag</label>
-                    <label><input type="checkbox" name="wochentage" value="samstag"> Samstag</label>
-                    <label><input type="checkbox" name="wochentage" value="sonntag"> Sonntag</label>
-                </div>
-            </fieldset>
+                <fieldset>
+                    <legend>Wochentage auswählen</legend>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="wochentage" value="alle" checked> Alle</label>
+                        <label><input type="checkbox" name="wochentage" value="montag"> Montag</label>
+                        <label><input type="checkbox" name="wochentage" value="dienstag"> Dienstag</label>
+                        <label><input type="checkbox" name="wochentage" value="mittwoch"> Mittwoch</label>
+                        <label><input type="checkbox" name="wochentage" value="donnerstag"> Donnerstag</label>
+                        <label><input type="checkbox" name="wochentage" value="freitag"> Freitag</label>
+                        <label><input type="checkbox" name="wochentage" value="samstag"> Samstag</label>
+                        <label><input type="checkbox" name="wochentage" value="sonntag"> Sonntag</label>
+                    </div>
+                </fieldset>
 
-            <fieldset>
-                <legend>Uhrzeiten auswählen</legend>
-                <label for="chartVon">Von:</label>
-                <select name="chartVon" id="chartVon" required>
-                    <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:00",$h); ?>
-                        <option value="<?php echo $hour; ?>" <?php echo $h===0?'selected':''; ?>><?php echo $hour; ?></option>
-                    <?php endfor; ?>
+                <fieldset>
+                    <legend>Uhrzeiten auswählen</legend>
+                    <label for="chartVon">Von:</label>
+                    <select name="chartVon" id="chartVon" required>
+                        <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:00",$h); ?>
+                            <option value="<?php echo $hour; ?>" <?php echo $h===0?'selected':''; ?>><?php echo $hour; ?></option>
+                        <?php endfor; ?>
+                    </select>
+
+                    <label for="chartBis">Bis:</label>
+                    <select name="chartBis" id="chartBis" required>
+                        <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:00",$h); ?>
+                            <option value="<?php echo $hour; ?>" <?php echo $h===23?'selected':''; ?>><?php echo $hour; ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Buchungstyp auswählen</legend>
+                    <div class="radio-group">
+                        <label><input type="radio" name="chartBuchungstyp" value="abholung"> Abholung</label>
+                        <label><input type="radio" name="chartBuchungstyp" value="abgabe"> Abgabe</label>
+                        <label><input type="radio" name="chartBuchungstyp" value="beides" checked> Beides</label>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Buchungsportale auswählen</legend>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone CAB"> iPhone CAB</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="Android CAB"> Android CAB</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="IVR"> IVR</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="Windows"> Windows</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone SRH"> iPhone SRH</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="LIDL-BIKE"> LIDL-BIKE</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="Android SRH"> Android SRH</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="Techniker F_5 (-67212-)"> Techniker F_5 (-67212-)</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone KON"> iPhone KON</label>
+                    </div>
+                </fieldset>
+
+                <button type="submit">Diagramme aktualisieren</button>
+            </form>
+
+            <!-- Station für Markierung im Graphen auswählen -->
+            <div style="margin-bottom:10px;">
+                <label for="stationForChart">Station für Markierung im Graphen auswählen:</label>
+                <select id="stationForChart">
+                    <option value="">-- Bitte wählen --</option>
                 </select>
+                <button onclick="highlightStationOnChart()">Station hervorheben</button>
+            </div>
+        </div>
 
-                <label for="chartBis">Bis:</label>
-                <select name="chartBis" id="chartBis" required>
-                    <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:00",$h); ?>
-                        <option value="<?php echo $hour; ?>" <?php echo $h===23?'selected':''; ?>><?php echo $hour; ?></option>
-                    <?php endfor; ?>
-                </select>
-            </fieldset>
-
-            <fieldset>
-                <legend>Buchungstyp auswählen</legend>
-                <div class="radio-group">
-                    <label><input type="radio" name="chartBuchungstyp" value="abholung"> Abholung</label>
-                    <label><input type="radio" name="chartBuchungstyp" value="abgabe"> Abgabe</label>
-                    <label><input type="radio" name="chartBuchungstyp" value="beides" checked> Beides</label>
-                </div>
-            </fieldset>
-
-            <fieldset>
-                <legend>Buchungsportale auswählen</legend>
-                <div class="checkbox-group">
-                    <label><input type="checkbox" name="chartBuchungsportale" value="iPhone CAB"> iPhone CAB</label>
-                    <label><input type="checkbox" name="chartBuchungsportale" value="Android CAB"> Android CAB</label>
-                    <label><input type="checkbox" name="chartBuchungsportale" value="IVR"> IVR</label>
-                    <label><input type="checkbox" name="chartBuchungsportale" value="Windows"> Windows</label>
-                    <label><input type="checkbox" name="chartBuchungsportale" value="iPhone SRH"> iPhone SRH</label>
-                    <label><input type="checkbox" name="chartBuchungsportale" value="LIDL-BIKE"> LIDL-BIKE</label>
-                    <label><input type="checkbox" name="chartBuchungsportale" value="Android SRH"> Android SRH</label>
-                    <label><input type="checkbox" name="chartBuchungsportale" value="Techniker F_5 (-67212-)"> Techniker F_5 (-67212-)</label>
-                    <label><input type="checkbox" name="chartBuchungsportale" value="iPhone KON"> iPhone KON</label>
-                </div>
-            </fieldset>
-
-            <button type="submit">Diagramme aktualisieren</button>
-        </form>
+        <div id="diagramsContainer">
+            <div id="pieChartContainer"></div>
+            <div id="lineChartContainer"></div>
+        </div>
     </div>
-
-    <div style="margin-bottom:10px;">
-        <label for="stationForChart">Station für Markierung im Graphen auswählen:</label>
-        <select id="stationForChart">
-            <option value="">-- Bitte wählen --</option>
-        </select>
-        <button onclick="highlightStationOnChart()">Station hervorheben</button>
-    </div>
-    <div id="pieChartContainer" style="width:45%; display:inline-block; vertical-align:top;"></div>
-    <div id="lineChartContainer" style="width:50%; display:inline-block; vertical-align:top;"></div>
 </div>
 
+<!-- Skripte -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="../includes/initMap.js"></script>
 <script src="../includes/workLoadFunctions.js"></script>
@@ -265,8 +284,10 @@
         toggleDisplay('filterForFlowLines', false);
         document.getElementById('chartsContainer').style.display = 'none';
 
-        if (window.markerArray && window.markerArray.length > 0) {
+        // Stationsauswahl nur einmal initialisieren
+        if (!window.searchUIInitialized && window.markerArray && window.markerArray.length > 0) {
             initializeStationSelectionUI(window.markerArray);
+            window.searchUIInitialized = true;
         }
     }
 
@@ -281,7 +302,7 @@
 
     function showFlowLinesForm() {
         resetMarkers();
-        populateStationsSelectFlowLines(); // Hier wird wieder station_name als value genutzt
+        populateStationsSelectFlowLines();
         toggleDisplay('filterForWorkload', false);
         toggleDisplay('searchForStationDiv', false);
         toggleDisplay('addressSearchDiv', false);
@@ -298,32 +319,11 @@
     function toggleChartsDisplay(){
         const container = document.getElementById('chartsContainer');
         container.style.display = (container.style.display === 'none' || container.style.display==='') ? 'block' : 'none';
-    }
 
-    // Angepasste Funktion, um wieder station_name als value zu nutzen
-    function populateStationsSelectFlowLines() {
-        const select = document.getElementById('selectedStations');
-        if (!select) return;
-
-        // Vorhandene Optionen entfernen
-        while (select.firstChild) {
-            select.removeChild(select.firstChild);
+        // Wenn Charts angezeigt werden, Stationen in dropdown stationForChart füllen:
+        if (container.style.display === 'block' && window.stationsData) {
+            populateStationSelectForChart(window.stationsData);
         }
-
-        // Standardoption
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = '-- Bitte eine Station wählen --';
-        select.appendChild(defaultOption);
-
-        // Stationen hinzufügen - Wieder station_name verwenden
-        const allStations = window.stationsData || [];
-        allStations.forEach(st => {
-            const option = document.createElement('option');
-            option.value = st.station_name; // hier wieder station_name
-            option.textContent = st.station_name;
-            select.appendChild(option);
-        });
     }
 </script>
 

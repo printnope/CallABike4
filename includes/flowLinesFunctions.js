@@ -1,3 +1,5 @@
+// flowLinesFunctions.js
+// Stellt die Funktionalität für Flow-Lines bereit.
 
 document.addEventListener('DOMContentLoaded', function() {
     const flowLinesForm = document.getElementById('flowLinesForm');
@@ -19,6 +21,32 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+function populateStationsSelectFlowLines() {
+    const select = document.getElementById('selectedStations');
+    if (!select) return;
+
+    // Vorhandene Optionen entfernen
+    while (select.firstChild) {
+        select.removeChild(select.firstChild);
+    }
+
+    // Standardoption
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- Bitte eine Station wählen --';
+    select.appendChild(defaultOption);
+
+    // Stationen hinzufügen (hier station_name als value)
+    const allStations = window.stationsData || [];
+    allStations.forEach(st => {
+        const option = document.createElement('option');
+        option.value = st.station_name;
+        option.textContent = st.station_name;
+        select.appendChild(option);
+    });
+}
+
 
 function drawFlowLinesFromFavorites(stationsData, topN) {
     removeExistingFlowLines();
@@ -78,7 +106,7 @@ function hideNonRelevantStations(relevantStations) {
         if (!relevantStations.has(marker.stationData.station_name)) {
             marker.setOpacity(0); // Ausblenden
         } else {
-            marker.setOpacity(1); // Sicherstellen, dass relevante sichtbar sind
+            marker.setOpacity(1); // Relevante Stationen sichtbar
         }
     });
 }

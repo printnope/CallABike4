@@ -74,9 +74,7 @@ fetch(pathToJson)
         });
 
         // Station Dropdown für Charts befüllen
-        if(typeof populateStationSelectForChart === 'function') {
             populateStationSelectForChart(window.stationsData);
-        }
     })
     .catch(error => console.error('Fehler beim Laden der Stationsdaten:', error));
 
