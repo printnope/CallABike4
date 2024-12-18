@@ -14,7 +14,6 @@
 </head>
 <body>
 
-<!-- Karte mit eingebetteter Legende -->
 <div id="map">
     <div class="legend">
         <h4>Legende</h4>
@@ -24,7 +23,6 @@
     </div>
 </div>
 
-<!-- Buttons für zusätzliche Funktionen -->
 <div class="button-group">
     <button onclick="showFilterForm()">Filter Gesamtzahlen</button>
     <button onclick="resetMarkers()">Reset</button>
@@ -32,11 +30,11 @@
     <button onclick="showSearchStation()">Search for Station</button>
     <button onclick="startRoutingFromCurrentPosition()">Routing from current position</button>
     <button onclick="showAddressSearch()">Routing from address</button>
-    <!-- Button für Flow Lines -->
     <button onclick="showFlowLinesForm()">Show Flow Lines</button>
+    <!-- Neuer Button zum Anzeigen der Charts -->
+    <button onclick="toggleChartsDisplay()">Show Charts</button>
 </div>
 
-<!-- Div für die Stationssuche -->
 <div id="searchForStationDiv" style="display: none;">
     <table id="stationDataTable" border="1" cellpadding="5" style="margin-top:10px;">
         <thead>
@@ -65,10 +63,8 @@
     </table>
 </div>
 
-<!-- Formular für Workload-Filter -->
 <div id="filterForWorkload" style="display: none;">
     <form id="filterForm">
-        <!-- Wochentage Auswahl -->
         <fieldset>
             <legend>Wochentage auswählen</legend>
             <div class="checkbox-group">
@@ -83,7 +79,6 @@
             </div>
         </fieldset>
 
-        <!-- Uhrzeiten Auswahl -->
         <fieldset>
             <legend>Uhrzeiten auswählen</legend>
             <div class="time-select">
@@ -105,7 +100,6 @@
             </div>
         </fieldset>
 
-        <!-- Buchungen nach Abholung oder Abgabe -->
         <fieldset>
             <legend>Buchungstyp auswählen</legend>
             <div class="radio-group">
@@ -115,7 +109,6 @@
             </div>
         </fieldset>
 
-        <!-- Buchungsportale Auswahl -->
         <fieldset>
             <legend>Buchungsportale auswählen</legend>
             <div class="checkbox-group">
@@ -131,7 +124,6 @@
             </div>
         </fieldset>
 
-        <!-- Referenzwert Eingabe -->
         <fieldset>
             <legend>Schwellenwert festlegen</legend>
             <div class="threshold-group">
@@ -141,12 +133,10 @@
             </div>
         </fieldset>
 
-        <!-- Absenden Button -->
         <button type="submit" class="submit-btn">Filter anwenden</button>
     </form>
 </div>
 
-<!-- Formular für Flow Lines Filter -->
 <div id="filterForFlowLines" style="display: none; margin-top:10px;">
     <form id="flowLinesForm">
         <fieldset>
@@ -163,20 +153,105 @@
     </form>
 </div>
 
-<!-- NEUES DIV für die Adress-Suche -->
 <div id="addressSearchDiv" style="display:none; margin-top:10px;">
     <input type="text" id="addressInput" placeholder="Adresse eingeben..." style="width:200px;">
     <button onclick="searchAddressForRouting()">Adresse suchen</button>
 </div>
 
+<!-- Bereich für die Charts -->
+<div id="chartsContainer" style="display:none; margin-top:20px;">
+    <h2>Charts</h2>
+    <!-- Neues Formular für die Chart-Filterung -->
+    <div id="chartFilterFormContainer">
+        <form id="chartFilterForm" style="margin-bottom:20px;">
+            <fieldset>
+                <legend>Zeitraum-Modus</legend>
+                <label><input type="radio" name="zeitraumModus" value="stunden" checked> Stundenweise Darstellung</label>
+                <label><input type="radio" name="zeitraumModus" value="tage"> Tagesweise Darstellung</label>
+            </fieldset>
+
+            <fieldset>
+                <legend>Wochentage auswählen</legend>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="wochentage" value="alle" checked> Alle</label>
+                    <label><input type="checkbox" name="wochentage" value="montag"> Montag</label>
+                    <label><input type="checkbox" name="wochentage" value="dienstag"> Dienstag</label>
+                    <label><input type="checkbox" name="wochentage" value="mittwoch"> Mittwoch</label>
+                    <label><input type="checkbox" name="wochentage" value="donnerstag"> Donnerstag</label>
+                    <label><input type="checkbox" name="wochentage" value="freitag"> Freitag</label>
+                    <label><input type="checkbox" name="wochentage" value="samstag"> Samstag</label>
+                    <label><input type="checkbox" name="wochentage" value="sonntag"> Sonntag</label>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Uhrzeiten auswählen</legend>
+                <label for="chartVon">Von:</label>
+                <select name="chartVon" id="chartVon" required>
+                    <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:00",$h); ?>
+                        <option value="<?php echo $hour; ?>" <?php echo $h===0?'selected':''; ?>><?php echo $hour; ?></option>
+                    <?php endfor; ?>
+                </select>
+
+                <label for="chartBis">Bis:</label>
+                <select name="chartBis" id="chartBis" required>
+                    <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:00",$h); ?>
+                        <option value="<?php echo $hour; ?>" <?php echo $h===23?'selected':''; ?>><?php echo $hour; ?></option>
+                    <?php endfor; ?>
+                </select>
+            </fieldset>
+
+            <fieldset>
+                <legend>Buchungstyp auswählen</legend>
+                <div class="radio-group">
+                    <label><input type="radio" name="chartBuchungstyp" value="abholung"> Abholung</label>
+                    <label><input type="radio" name="chartBuchungstyp" value="abgabe"> Abgabe</label>
+                    <label><input type="radio" name="chartBuchungstyp" value="beides" checked> Beides</label>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Buchungsportale auswählen</legend>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="chartBuchungsportale" value="iPhone CAB"> iPhone CAB</label>
+                    <label><input type="checkbox" name="chartBuchungsportale" value="Android CAB"> Android CAB</label>
+                    <label><input type="checkbox" name="chartBuchungsportale" value="IVR"> IVR</label>
+                    <label><input type="checkbox" name="chartBuchungsportale" value="Windows"> Windows</label>
+                    <label><input type="checkbox" name="chartBuchungsportale" value="iPhone SRH"> iPhone SRH</label>
+                    <label><input type="checkbox" name="chartBuchungsportale" value="LIDL-BIKE"> LIDL-BIKE</label>
+                    <label><input type="checkbox" name="chartBuchungsportale" value="Android SRH"> Android SRH</label>
+                    <label><input type="checkbox" name="chartBuchungsportale" value="Techniker F_5 (-67212-)"> Techniker F_5 (-67212-)</label>
+                    <label><input type="checkbox" name="chartBuchungsportale" value="iPhone KON"> iPhone KON</label>
+                </div>
+            </fieldset>
+
+            <button type="submit">Diagramme aktualisieren</button>
+        </form>
+    </div>
+
+    <div style="margin-bottom:10px;">
+        <label for="stationForChart">Station für Markierung im Graphen auswählen:</label>
+        <select id="stationForChart">
+            <option value="">-- Bitte wählen --</option>
+        </select>
+        <button onclick="highlightStationOnChart()">Station hervorheben</button>
+    </div>
+    <div id="pieChartContainer" style="width:45%; display:inline-block; vertical-align:top;"></div>
+    <div id="lineChartContainer" style="width:50%; display:inline-block; vertical-align:top;"></div>
+</div>
+
+<!-- Scripts -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="../includes/initMap.js"></script>
 <script src="../includes/workLoadFunctions.js"></script>
 <script src="../includes/stationsSelector.js"></script>
 <script src="../includes/routingFromCurrentPosition.js"></script>
 <script src="../includes/adressSearchRouting.js"></script>
 <script src="../includes/flowLinesFunctions.js"></script>
+<script src="../includes/chartFunctions.js"></script>
+
 <script>
     function showFilterForm() {
         resetMarkers();
@@ -184,6 +259,7 @@
         toggleDisplay('searchForStationDiv', false);
         toggleDisplay('addressSearchDiv', false);
         toggleDisplay('filterForFlowLines', false);
+        document.getElementById('chartsContainer').style.display = 'none';
     }
 
     function showSearchStation() {
@@ -192,6 +268,7 @@
         toggleDisplay('searchForStationDiv', true);
         toggleDisplay('addressSearchDiv', false);
         toggleDisplay('filterForFlowLines', false);
+        document.getElementById('chartsContainer').style.display = 'none';
     }
 
     function showAddressSearch() {
@@ -200,6 +277,7 @@
         toggleDisplay('searchForStationDiv', false);
         toggleDisplay('addressSearchDiv', true);
         toggleDisplay('filterForFlowLines', false);
+        document.getElementById('chartsContainer').style.display = 'none';
     }
 
     function showFlowLinesForm() {
@@ -209,6 +287,7 @@
         toggleDisplay('searchForStationDiv', false);
         toggleDisplay('addressSearchDiv', false);
         toggleDisplay('filterForFlowLines', true);
+        document.getElementById('chartsContainer').style.display = 'none';
     }
 
     function toggleDisplay(id, show) {
@@ -217,13 +296,19 @@
         elem.style.display = show ? 'block' : 'none';
     }
 
-
+    function toggleChartsDisplay(){
+        const container = document.getElementById('chartsContainer');
+        if (container.style.display === 'none' || container.style.display==='') {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    }
 
     function populateStationsSelectFlowLines() {
         const select = document.getElementById('selectedStations');
         if (!select) return;
 
-        // Alte Optionen entfernen
         while (select.firstChild) {
             select.removeChild(select.firstChild);
         }
@@ -235,7 +320,6 @@
             select.appendChild(option);
         });
     }
-
 </script>
 
 <?php

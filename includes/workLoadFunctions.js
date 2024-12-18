@@ -1,3 +1,4 @@
+// workLoadFunctions.js
 
 document.addEventListener('DOMContentLoaded', function () {
     let filterForm = document.getElementById('filterForm');
@@ -18,8 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const selectedPortals = Array.from(portalCheckboxes).map(cb => cb.value);
 
             const thresholdInput = document.getElementById('threshold');
-            const threshold = parseInt(thresholdInput.value);
+            const threshold = parseInt(thresholdInput.value, 10);
 
+            // Marker filtern
             filterMarkersByCriteria(startTime, endTime, selectedWeekdays, buchungstyp, threshold, selectedPortals);
 
             const formDiv = document.getElementById('filterForWorkload');
@@ -44,7 +46,7 @@ function filterMarkersByCriteria(startTime, endTime, weekdays, buchungstyp, thre
 
     allMarkers.forEach(marker => {
         let stationData = marker.stationData;
-        let { startInPeriod, endInPeriod } = getStartEndInPeriod(stationData, weekdays, startTime, endTime, selectedPortals, buchungstyp);
+        let {startInPeriod, endInPeriod} = getStartEndInPeriod(stationData, weekdays, startTime, endTime, selectedPortals, buchungstyp);
 
         let totalInPeriod = startInPeriod + endInPeriod;
 
@@ -53,11 +55,9 @@ function filterMarkersByCriteria(startTime, endTime, weekdays, buchungstyp, thre
             (buchungstyp === 'abgabe' && endInPeriod > 0);
 
         if (selectedPortals.length > 0 && totalInPeriod === 0) {
+            // Wenn Portale ausgewählt, aber keine Buchungen in diesem Zeitraum
             marker.setOpacity(0);
-            return;
-        }
-
-        if (totalInPeriod > 0 && isBuchungstypMatch) {
+        } else if (totalInPeriod > 0 && isBuchungstypMatch) {
             marker.setOpacity(1);
             setMarkerColorBasedOnValue(marker, startInPeriod, endInPeriod, buchungstyp, threshold);
         } else {
@@ -79,12 +79,11 @@ function getStartEndInPeriod(stationData, weekdays, startTime, endTime, selected
         const endHour = parseInt(endTime.split(':')[0], 10);
 
         for (let hour = startHour; hour <= endHour; hour++) {
-            let hourIndex = hour;
-            if (stundenDaten[hourIndex]) {
-                const { s, e } = accumulateHourData(stundenDaten[hourIndex], portalDaten[hourIndex], selectedPortals, buchungstyp);
-                startInPeriod += s;
-                endInPeriod += e;
-            }
+            let stundenDataForHour = stundenDaten[hour];
+            let portalDataForHour = portalDaten[hour];
+            let { s, e } = accumulateHourData(stundenDataForHour, portalDataForHour, selectedPortals, buchungstyp);
+            startInPeriod += s;
+            endInPeriod += e;
         }
     }
 
@@ -92,17 +91,30 @@ function getStartEndInPeriod(stationData, weekdays, startTime, endTime, selected
         let hourStart = 0;
         let hourEnd = 0;
 
+        if (!stundenDataForHour || !portalDataForHour) {
+            return { s:0, e:0 };
+        }
+
         if (selectedPortals.length > 0) {
+            // Nur gewählte Portale zählen
             selectedPortals.forEach(portal => {
-                const portalData = portalDataForHour[portal];
-                if (portalData && buchungstypFilterMatch(buchungstyp, portalData)) {
-                    hourStart += portalData.Anzahl_Startvorgaenge;
-                    hourEnd += portalData.Anzahl_Endvorgaenge;
+                const pd = portalDataForHour[portal];
+                if (pd && buchungstypFilterMatch(buchungstyp, pd)) {
+                    hourStart += pd.Anzahl_Startvorgaenge;
+                    hourEnd += pd.Anzahl_Endvorgaenge;
                 }
             });
         } else {
-            hourStart += stundenDataForHour.Anzahl_Startvorgaenge;
-            hourEnd += stundenDataForHour.Anzahl_Endvorgaenge;
+            // Alle Portale zählen
+            // Hier zählt man einfach die Summe je nach Buchungstyp
+            if (buchungstyp === 'abholung') {
+                hourStart += stundenDataForHour.Anzahl_Startvorgaenge;
+            } else if (buchungstyp === 'abgabe') {
+                hourEnd += stundenDataForHour.Anzahl_Endvorgaenge;
+            } else if (buchungstyp === 'beides') {
+                hourStart += stundenDataForHour.Anzahl_Startvorgaenge;
+                hourEnd += stundenDataForHour.Anzahl_Endvorgaenge;
+            }
         }
 
         return { s: hourStart, e: hourEnd };
@@ -110,7 +122,8 @@ function getStartEndInPeriod(stationData, weekdays, startTime, endTime, selected
 
     weekdays.forEach(wochentagLang => {
         if (wochentagLang.toLowerCase() === 'alle') {
-            Object.keys(stationData.Anzahl_Fahrten_pro_Wochentag_und_Stunde).forEach(wochentagKurz => {
+            // Alle Wochentage (Mo-So)
+            ['Mo','Di','Mi','Do','Fr','Sa','So'].forEach(wochentagKurz => {
                 processWeekday(wochentagKurz);
             });
         } else {
@@ -120,16 +133,18 @@ function getStartEndInPeriod(stationData, weekdays, startTime, endTime, selected
             }
         }
     });
+
     return {startInPeriod, endInPeriod};
 }
 
 function buchungstypFilterMatch(buchungstyp, portalData) {
+    if (!portalData) return false;
     if (buchungstyp === 'abholung') {
         return portalData.Anzahl_Startvorgaenge > 0;
     } else if (buchungstyp === 'abgabe') {
         return portalData.Anzahl_Endvorgaenge > 0;
     } else if (buchungstyp === 'beides') {
-        return portalData.Anzahl_Startvorgaenge > 0 || portalData.Anzahl_Endvorgaenge > 0;
+        return (portalData.Anzahl_Startvorgaenge + portalData.Anzahl_Endvorgaenge) > 0;
     }
     return false;
 }
