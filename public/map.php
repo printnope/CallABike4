@@ -19,9 +19,9 @@
     <link rel="stylesheet" href="../css/map.css">
 </head>
 <body>
-<div id="headerContainer">
+
 <h1 id="headline">Call A Bike</h1>
-</div>
+
 <div id="map">
     <div class="legend">
         <h4>Legende</h4>
