@@ -1,6 +1,8 @@
 // initMap.js
 
 window.markerArray = [];
+window.drawnFlowLines = [];
+let pathToJson = "../data/stations.json";
 
 // Icons
 window.defaultIcon = L.icon({
@@ -31,7 +33,6 @@ window.redIcon = L.icon({
 });
 
 // Karte
-let pathToJson = "../data/stations.json";
 window.map = L.map('map').setView([50.1109, 8.6821], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap-Mitwirkende',
@@ -79,11 +80,11 @@ fetch(pathToJson)
     .catch(error => console.error('Fehler beim Laden der Stationsdaten:', error));
 
 function resetMarkers(){
-    if (typeof routeControl !== 'undefined' && routeControl) {
+    if ( routeControl) {
         window.map.removeControl(routeControl);
         window.map.removeLayer(window.userMarker);
     }
-    if (typeof routeControlFromAddress !== 'undefined' && routeControlFromAddress){
+    if (routeControlFromAddress){
         window.map.removeControl(routeControlFromAddress);
         window.map.removeLayer(addressMarker);
     }
@@ -103,7 +104,7 @@ function resetMarkers(){
         );
     });
 
-    if (window.drawnFlowLines && window.drawnFlowLines.length > 0) {
+    if (window.drawnFlowLines.length > 0) {
         window.drawnFlowLines.forEach(line => {
             window.map.removeLayer(line);
         });

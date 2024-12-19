@@ -99,30 +99,79 @@ function populateStationsSelect(selectElement, stations) {
 }
 
 function fillStationDataTable(stationData) {
-    function setTableCellValue(id, value) {
+    // Hilfsfunktion zum Setzen von Tabellenzellenwerten mit verschiedenen Formaten
+    function setTableCellValue(id, value, type = 'text') {
         const cell = document.getElementById(id);
         if (cell) {
-            if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
-                cell.innerHTML = "<pre>" + JSON.stringify(value, null, 2) + "</pre>";
+            if (type === 'list') {
+                if (Array.isArray(value)) {
+                    cell.innerHTML = '<ul>' + value.map(item => `<li>${item}</li>`).join('') + '</ul>';
+                } else {
+                    cell.textContent = '';
+                }
+            } else if (type === 'sortedList') {
+                if (typeof value === 'object' && value !== null) {
+                    // Sortiere nach Wert absteigend und formatiere als Liste
+                    const sorted = Object.entries(value)
+                        .sort((a, b) => b[1] - a[1])
+                        .map(entry => `${entry[0]} (${entry[1]})`);
+                    cell.innerHTML = '<ul>' + sorted.map(item => `<li>${item}</li>`).join('') + '</ul>';
+                } else {
+                    cell.textContent = '';
+                }
+            } else if (type === 'keyValueList') {
+                if (typeof value === 'object' && value !== null) {
+                    let listHTML = '<ul>';
+                    for (const key in value) {
+                        if (value.hasOwnProperty(key)) {
+                            listHTML += `<li>${key}: ${value[key]}</li>`;
+                        }
+                    }
+                    listHTML += '</ul>';
+                    cell.innerHTML = listHTML;
+                } else {
+                    cell.textContent = '';
+                }
+            } else if (type === 'formattedNumber') {
+                // Beispiel: Summe aller Werte in einem Array
+                if (Array.isArray(value)) {
+                    const sum = value.reduce((acc, curr) => acc + curr, 0);
+                    cell.textContent = sum;
+                } else {
+                    cell.textContent = (value !== null && value !== undefined) ? value : '';
+                }
             } else {
+                // Standardtext
                 cell.textContent = (value !== null && value !== undefined) ? value : '';
             }
         }
     }
 
+    // Setze einfache Werte
     setTableCellValue('Station_ID', stationData.Station_ID);
     setTableCellValue('station_name', stationData.station_name);
     setTableCellValue('Latitude', stationData.Latitude);
     setTableCellValue('Longitude', stationData.Longitude);
     setTableCellValue('Anzahl_Startvorgaenge', stationData.Anzahl_Startvorgaenge);
     setTableCellValue('Anzahl_Endvorgaenge', stationData.Anzahl_Endvorgaenge);
-    setTableCellValue('Buchungsportale_sortiert', stationData.Buchungsportale_sortiert);
+
+    // Buchungsportale sortiert nach Beliebtheit
+    if (stationData.Buchungsportale_sortiert && typeof stationData.Buchungsportale_sortiert === 'object') {
+        setTableCellValue('Buchungsportale_sortiert', stationData.Buchungsportale_sortiert, 'sortedList');
+    } else {
+        setTableCellValue('Buchungsportale_sortiert', []);
+    }
+
     setTableCellValue('Stosszeit', stationData.Stosszeit);
     setTableCellValue('Beliebtester_Wochentag', stationData.Beliebtester_Wochentag);
     setTableCellValue('Beliebteste_Endstation', stationData.Beliebteste_Endstation);
     setTableCellValue('Gesamtzahl_Fahrten', stationData.Gesamtzahl_Fahrten);
-    setTableCellValue('Beliebteste_Endstationen_sortiert', stationData.Beliebteste_Endstationen_sortiert);
-    setTableCellValue('Anzahl_Fahrten_pro_Wochentag', stationData.Anzahl_Fahrten_pro_Wochentag);
-    setTableCellValue('Anzahl_Fahrten_pro_Wochentag_und_Stunde', stationData.Anzahl_Fahrten_pro_Wochentag_und_Stunde);
-    setTableCellValue('Buchungsportale_pro_Wochentag_und_Stunde', stationData.Buchungsportale_pro_Wochentag_und_Stunde);
+
+    // Beliebteste Endstationen sortiert
+    if (stationData.Beliebteste_Endstationen_sortiert && typeof stationData.Beliebteste_Endstationen_sortiert === 'object') {
+        setTableCellValue('Beliebteste_Endstationen_sortiert', stationData.Beliebteste_Endstationen_sortiert, 'sortedList');
+    } else {
+        setTableCellValue('Beliebteste_Endstationen_sortiert', []);
+    }
 }
+

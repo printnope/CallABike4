@@ -19,7 +19,9 @@
     <link rel="stylesheet" href="../css/map.css">
 </head>
 <body>
-
+<div id="headerContainer">
+<h1 id="headline">Call A Bike</h1>
+</div>
 <div id="map">
     <div class="legend">
         <h4>Legende</h4>
@@ -62,9 +64,6 @@
         <tr><td>Beliebteste_Endstation</td><td id="Beliebteste_Endstation"></td></tr>
         <tr><td>Gesamtzahl_Fahrten</td><td id="Gesamtzahl_Fahrten"></td></tr>
         <tr><td>Beliebteste_Endstationen_sortiert</td><td id="Beliebteste_Endstationen_sortiert"></td></tr>
-        <tr><td>Anzahl_Fahrten_pro_Wochentag</td><td id="Anzahl_Fahrten_pro_Wochentag"></td></tr>
-        <tr><td>Anzahl_Fahrten_pro_Wochentag_und_Stunde</td><td id="Anzahl_Fahrten_pro_Wochentag_und_Stunde"></td></tr>
-        <tr><td>Buchungsportale_pro_Wochentag_und_Stunde</td><td id="Buchungsportale_pro_Wochentag_und_Stunde"></td></tr>
         </tbody>
     </table>
 </div>
@@ -267,64 +266,112 @@
 <script src="../includes/flowLinesFunctions.js"></script>
 <script src="../includes/chartFunctions.js"></script>
 <script>
+    let isShowAddressSearch = false;
+
     function showFilterForm() {
-        resetMarkers();
-        toggleDisplay('filterForWorkload', true);
-        toggleDisplay('searchForStationDiv', false);
-        toggleDisplay('addressSearchDiv', false);
-        toggleDisplay('filterForFlowLines', false);
-        document.getElementById('chartsContainer').style.display = 'none';
-    }
+        const filterDiv = document.getElementById('filterForWorkload');
+        const isVisible = filterDiv.style.display === 'block';
 
-    function showSearchStation() {
-        resetMarkers();
-        toggleDisplay('filterForWorkload', false);
-        toggleDisplay('searchForStationDiv', true);
-        toggleDisplay('addressSearchDiv', false);
-        toggleDisplay('filterForFlowLines', false);
-        document.getElementById('chartsContainer').style.display = 'none';
-
-        // Stationsauswahl nur einmal initialisieren
-        if (!window.searchUIInitialized && window.markerArray && window.markerArray.length > 0) {
-            initializeStationSelectionUI(window.markerArray);
-            window.searchUIInitialized = true;
+        if (isVisible) {
+            // Wenn bereits sichtbar, ausblenden
+            toggleDisplay('filterForWorkload', false);
+        } else {
+            // Andernfalls anzeigen und andere Bereiche ausblenden
+            resetMarkers();
+            toggleDisplay('filterForWorkload', true);
+            toggleDisplay('searchForStationDiv', false);
+            toggleDisplay('addressSearchDiv', false);
+            toggleDisplay('filterForFlowLines', false);
+            document.getElementById('chartsContainer').style.display = 'none';
         }
     }
 
-    function showAddressSearch() {
-        resetMarkers();
-        toggleDisplay('filterForWorkload', false);
-        toggleDisplay('searchForStationDiv', false);
-        toggleDisplay('addressSearchDiv', true);
-        toggleDisplay('filterForFlowLines', false);
-        document.getElementById('chartsContainer').style.display = 'none';
+    function showSearchStation() {
+        const searchDiv = document.getElementById('searchForStationDiv');
+        const isVisible = searchDiv.style.display === 'block';
+
+        if (isVisible) {
+            // Wenn bereits sichtbar, ausblenden
+            toggleDisplay('searchForStationDiv', false);
+        } else {
+            // Andernfalls anzeigen und andere Bereiche ausblenden
+            resetMarkers();
+            toggleDisplay('filterForWorkload', false);
+            toggleDisplay('searchForStationDiv', true);
+            toggleDisplay('addressSearchDiv', false);
+            toggleDisplay('filterForFlowLines', false);
+            document.getElementById('chartsContainer').style.display = 'none';
+            // Stationsauswahl nur einmal initialisieren
+            initializeStationSelectionUI(window.markerArray);
+        }
     }
 
-    function showFlowLinesForm() {
-        resetMarkers();
-        populateStationsSelectFlowLines();
-        toggleDisplay('filterForWorkload', false);
-        toggleDisplay('searchForStationDiv', false);
-        toggleDisplay('addressSearchDiv', false);
-        toggleDisplay('filterForFlowLines', true);
-        document.getElementById('chartsContainer').style.display = 'none';
+
+    function showAddressSearch() {
+        const div = document.getElementById('addressSearchDiv');
+        const isVisible = div.style.display === 'block';
+
+        if (isVisible) {
+            // Form is visible, so hide it
+            toggleDisplay('addressSearchDiv', false);
+        } else {
+            // Form is hidden, so show it and hide others
+            resetMarkers();
+            toggleDisplay('filterForWorkload', false);
+            toggleDisplay('searchForStationDiv', false);
+            toggleDisplay('addressSearchDiv', true);
+            toggleDisplay('filterForFlowLines', false);
+            document.getElementById('chartsContainer').style.display = 'none';
+        }
     }
+
+
+    function showFlowLinesForm() {
+        const flowLinesDiv = document.getElementById('filterForFlowLines');
+        const isVisible = flowLinesDiv.style.display === 'block';
+
+        if (isVisible) {
+            // Wenn bereits sichtbar, ausblenden
+            toggleDisplay('filterForFlowLines', false);
+        } else {
+            // Andernfalls anzeigen und andere Bereiche ausblenden
+            resetMarkers();
+            populateStationsSelectFlowLines();
+            toggleDisplay('filterForWorkload', false);
+            toggleDisplay('searchForStationDiv', false);
+            toggleDisplay('addressSearchDiv', false);
+            toggleDisplay('filterForFlowLines', true);
+            document.getElementById('chartsContainer').style.display = 'none';
+        }
+    }
+
 
     function toggleDisplay(id, show) {
         const elem = document.getElementById(id);
         if (!elem) return;
         elem.style.display = show ? 'block' : 'none';
     }
-
-    function toggleChartsDisplay(){
+    function toggleChartsDisplay() {
         const container = document.getElementById('chartsContainer');
-        container.style.display = (container.style.display === 'none' || container.style.display==='') ? 'block' : 'none';
+        const isVisible = container.style.display === 'block';
 
-        // Wenn Charts angezeigt werden, Stationen in dropdown stationForChart füllen:
-        if (container.style.display === 'block' && window.stationsData) {
-            populateStationSelectForChart(window.stationsData);
+        if (isVisible) {
+            // Wenn bereits sichtbar, ausblenden
+            toggleDisplay('chartsContainer', false);
+        } else {
+            // Andernfalls anzeigen und andere Bereiche ausblenden
+            toggleDisplay('filterForWorkload', false);
+            toggleDisplay('searchForStationDiv', false);
+            toggleDisplay('addressSearchDiv', false);
+            toggleDisplay('filterForFlowLines', false);
+            toggleDisplay('chartsContainer', true);
+            // Wenn Charts angezeigt werden, Stationen in Dropdown stationForChart füllen:
+            if (window.stationsData) {
+                populateStationSelectForChart(window.stationsData);
+            }
         }
     }
+
 </script>
 
 <?php
