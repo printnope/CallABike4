@@ -235,7 +235,9 @@
 
                 <button type="submit">Diagramme aktualisieren</button>
             </form>
+        </div>
 
+        <div id="diagramsContainer">
             <!-- Station für Markierung im Graphen auswählen -->
             <div style="margin-bottom:10px;">
                 <label for="stationForChart">Station für Markierung im Graphen auswählen:</label>
@@ -244,9 +246,6 @@
                 </select>
                 <button onclick="highlightStationOnChart()">Station hervorheben</button>
             </div>
-        </div>
-
-        <div id="diagramsContainer">
             <div id="pieChartContainer"></div>
             <div id="lineChartContainer"></div>
         </div>
