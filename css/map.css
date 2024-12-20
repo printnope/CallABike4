@@ -1,5 +1,7 @@
 body{
     background-color: #dcdfdd;
+    font-family: "Playfair Display", serif;
+
 }
 
 h1{
@@ -138,3 +140,4 @@ button:hover {
 #lineChartContainer {
     width: 100%;
 }
+
