@@ -39,7 +39,7 @@
     <button onclick="startRoutingFromCurrentPosition()">Routing from current position</button>
     <button onclick="showAddressSearch()">Routing from address</button>
     <button onclick="showFlowLinesForm()">Show Flow Lines</button>
-    <button onclick="toggleChartsDisplay()">Show Charts</button>
+    <button onclick="toggleChartsDisplay(); highlightStationOnChart()">Show Charts</button>
 </div>
 
 <!-- Stationssuche -->
@@ -74,14 +74,14 @@
         <fieldset>
             <legend>Wochentage auswählen</legend>
             <div class="checkbox-group">
-                <label><input type="checkbox" name="wochentage" value="alle" id="alle"> Alle</label>
-                <label><input type="checkbox" name="wochentage" value="montag"> Montag</label>
-                <label><input type="checkbox" name="wochentage" value="dienstag"> Dienstag</label>
-                <label><input type="checkbox" name="wochentage" value="mittwoch"> Mittwoch</label>
-                <label><input type="checkbox" name="wochentage" value="donnerstag"> Donnerstag</label>
-                <label><input type="checkbox" name="wochentage" value="freitag"> Freitag</label>
-                <label><input type="checkbox" name="wochentage" value="samstag"> Samstag</label>
-                <label><input type="checkbox" name="wochentage" value="sonntag"> Sonntag</label>
+                <label><input type="checkbox" name="wochentage" value="alle" id="alle" checked> Alle</label>
+                <label><input type="checkbox" name="wochentage" value="montag" checked> Montag</label>
+                <label><input type="checkbox" name="wochentage" value="dienstag" checked> Dienstag</label>
+                <label><input type="checkbox" name="wochentage" value="mittwoch" checked> Mittwoch</label>
+                <label><input type="checkbox" name="wochentage" value="donnerstag" checked> Donnerstag</label>
+                <label><input type="checkbox" name="wochentage" value="freitag" checked> Freitag</label>
+                <label><input type="checkbox" name="wochentage" value="samstag" checked> Samstag</label>
+                <label><input type="checkbox" name="wochentage" value="sonntag" checked> Sonntag</label>
             </div>
         </fieldset>
 
@@ -99,7 +99,7 @@
                 <label for="bis">Bis:</label>
                 <select name="bis" id="bis" required>
                     <option value="" selected>-- Uhrzeit wählen --</option>
-                    <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:00",$h); ?>
+                    <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:59",$h); ?>
                         <option value="<?php echo $hour; ?>"><?php echo $hour; ?></option>
                     <?php endfor; ?>
                 </select>
@@ -111,7 +111,7 @@
             <div class="radio-group">
                 <label><input type="radio" name="buchungstyp" value="abholung" required> Abholung</label>
                 <label><input type="radio" name="buchungstyp" value="abgabe"> Abgabe</label>
-                <label><input type="radio" name="buchungstyp" value="beides"> Beides</label>
+                <label><input type="radio" name="buchungstyp" value="beides" checked> Beides</label>
             </div>
         </fieldset>
 
@@ -203,7 +203,7 @@
 
                     <label for="chartBis">Bis:</label>
                     <select name="chartBis" id="chartBis" required>
-                        <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:00",$h); ?>
+                        <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:59",$h); ?>
                             <option value="<?php echo $hour; ?>" <?php echo $h===23?'selected':''; ?>><?php echo $hour; ?></option>
                         <?php endfor; ?>
                     </select>
@@ -221,15 +221,15 @@
                 <fieldset>
                     <legend>Buchungsportale auswählen</legend>
                     <div class="checkbox-group">
-                        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone CAB"> iPhone CAB</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="Android CAB"> Android CAB</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="IVR"> IVR</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="Windows"> Windows</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone SRH"> iPhone SRH</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="LIDL-BIKE"> LIDL-BIKE</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="Android SRH"> Android SRH</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="Techniker F_5 (-67212-)"> Techniker F_5 (-67212-)</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone KON"> iPhone KON</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone CAB" checked> iPhone CAB</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="Android CAB" checked> Android CAB</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="IVR" checked> IVR</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="Windows" checked> Windows</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone SRH" checked> iPhone SRH</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="LIDL-BIKE" checked> LIDL-BIKE</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="Android SRH" checked> Android SRH</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="Techniker F_5 (-67212-)" checked> Techniker F_5 (-67212-)</label>
+                        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone KON" checked> iPhone KON</label>
                     </div>
                 </fieldset>
 

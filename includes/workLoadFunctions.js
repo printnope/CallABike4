@@ -31,6 +31,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+
+
     const alleCheckbox = document.getElementById('alle');
     if (alleCheckbox) {
         alleCheckbox.addEventListener('change', function () {
