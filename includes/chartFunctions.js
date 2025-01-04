@@ -456,7 +456,6 @@ function accumulateHourDataForStationCharts(stundenDataForHour, portalDataForHou
             }
         }
     }
-
     return { s: hourStart, e: hourEnd };
 }
 
