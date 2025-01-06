@@ -31,12 +31,6 @@ function populateStationsSelectFlowLines() {
         select.removeChild(select.firstChild);
     }
 
-    // Standardoption
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = '-- Bitte eine Station wählen --';
-    select.appendChild(defaultOption);
-
     // Stationen hinzufügen (hier station_name als value)
     const allStations = window.stationsData || [];
     allStations.forEach(st => {
@@ -46,7 +40,6 @@ function populateStationsSelectFlowLines() {
         select.appendChild(option);
     });
 }
-
 
 function drawFlowLinesFromFavorites(stationsData, topN) {
     removeExistingFlowLines();

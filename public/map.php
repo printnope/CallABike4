@@ -19,8 +19,11 @@
     <link rel="stylesheet" href="../css/map.css">
 </head>
 <body>
+<div id="header-div">
+    <img src="../includes/Bildschirmfoto_20250106_122001.png" alt="Bildschirmfoto_20250106_122001.png">
+    <h1 id="headline">Call A Bike</h1>
+</div>
 
-<h1 id="headline">Call A Bike</h1>
 
 <div id="map">
     <div class="legend">
@@ -32,14 +35,19 @@
 </div>
 
 <div class="button-group">
-    <button onclick="showFilterForm()">Filter Gesamtzahlen</button>
+    <div id = "visualize-map-container">
+        <button onclick="showFilterForm()">Filter Gesamtzahlen</button>
+        <button onclick="showFlowLinesForm()">Show Flow Lines</button>
+    </div>
+    <div id = "routing-container">
+        <button onclick="startRoutingFromCurrentPosition()">Routing from current position</button>
+        <button onclick="showAddressSearch()">Routing from address</button>
+    </div>
+    <div id = "analyze-container">
+        <button onclick="toggleChartsDisplay()">Show Charts</button>
+        <button onclick="showSearchStation()">Search for Station</button>
+    </div>
     <button onclick="resetMarkers()">Reset</button>
-    <button onclick="visualizeWorkloadInTotal()">Visualize Workload</button>
-    <button onclick="showSearchStation()">Search for Station</button>
-    <button onclick="startRoutingFromCurrentPosition()">Routing from current position</button>
-    <button onclick="showAddressSearch()">Routing from address</button>
-    <button onclick="showFlowLinesForm()">Show Flow Lines</button>
-    <button onclick="toggleChartsDisplay(); highlightStationOnChart()">Show Charts</button>
 </div>
 
 <!-- Stationssuche -->
@@ -90,7 +98,6 @@
             <div class="time-select">
                 <label for="von">Von:</label>
                 <select name="von" id="von" required>
-                    <option value="" selected>-- Uhrzeit wählen --</option>
                     <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:00",$h); ?>
                         <option value="<?php echo $hour; ?>"><?php echo $hour; ?></option>
                     <?php endfor; ?>
@@ -98,9 +105,10 @@
 
                 <label for="bis">Bis:</label>
                 <select name="bis" id="bis" required>
-                    <option value="" selected>-- Uhrzeit wählen --</option>
                     <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:59",$h); ?>
-                        <option value="<?php echo $hour; ?>"><?php echo $hour; ?></option>
+                        <option value="<?php echo $hour; ?>" <?php if ($h === 23){echo "selected";} ?>>
+                            <?php echo $hour; ?>
+                        </option>
                     <?php endfor; ?>
                 </select>
             </div>
@@ -118,15 +126,15 @@
         <fieldset>
             <legend>Buchungsportale auswählen</legend>
             <div class="checkbox-group">
-                <label><input type="checkbox" name="buchungsportale" value="iPhone CAB"> iPhone CAB</label>
-                <label><input type="checkbox" name="buchungsportale" value="Android CAB"> Android CAB</label>
-                <label><input type="checkbox" name="buchungsportale" value="IVR"> IVR</label>
-                <label><input type="checkbox" name="buchungsportale" value="Windows"> Windows</label>
-                <label><input type="checkbox" name="buchungsportale" value="iPhone SRH"> iPhone SRH</label>
-                <label><input type="checkbox" name="buchungsportale" value="LIDL-BIKE"> LIDL-BIKE</label>
-                <label><input type="checkbox" name="buchungsportale" value="Android SRH"> Android SRH</label>
-                <label><input type="checkbox" name="buchungsportale" value="Techniker F_5 (-67212-)"> Techniker F_5 (-67212-)</label>
-                <label><input type="checkbox" name="buchungsportale" value="iPhone KON"> iPhone KON</label>
+                <label><input type="checkbox" name="buchungsportale" value="iPhone CAB" checked> iPhone CAB</label>
+                <label><input type="checkbox" name="buchungsportale" value="Android CAB" checked> Android CAB</label>
+                <label><input type="checkbox" name="buchungsportale" value="IVR" checked> IVR</ label>
+                <label><input type="checkbox" name="buchungsportale" value="Windows" checked> Windows</label>
+                <label><input type="checkbox" name="buchungsportale" value="iPhone SRH" checked> iPhone SRH</label>
+                <label><input type="checkbox" name="buchungsportale" value="LIDL-BIKE" checked> LIDL-BIKE</label>
+                <label><input type="checkbox" name="buchungsportale" value="Android SRH" checked> Android SRH</label>
+                <label><input type="checkbox" name="buchungsportale" value="Techniker F_5 (-67212-)" checked> Techniker F_5 (-67212-)</label>
+                <label><input type="checkbox" name="buchungsportale" value="iPhone KON" checked> iPhone KON</label>
             </div>
         </fieldset>
 
@@ -134,7 +142,7 @@
             <legend>Schwellenwert festlegen</legend>
             <div class="threshold-group">
                 <label for="threshold">Schwellenwert:</label>
-                <input type="number" id="threshold" name="threshold" min="0" value="100" required>
+                <input type="number" id="threshold" name="threshold" value="0" required>
                 <small>Dieser Schwellenwert wird für Startvorgänge, Endvorgaenge und Differenz verwendet.</small>
             </div>
         </fieldset>
@@ -156,14 +164,14 @@
             <p>Wie viele der beliebtesten Endstationen sollen angezeigt werden? (z. B. Top 5)</p>
             <input type="number" id="topN" name="topN" value="5" min="1" style="width:60px;">
         </fieldset>
-        <button type="submit">Linien anzeigen</button>
+        <button class="submit-btn" type="submit">Linien anzeigen</button>
     </form>
 </div>
 
 <!-- Adress-Suche (Routing von Adresse) -->
 <div id="addressSearchDiv" style="display:none; margin-top:10px;">
     <input type="text" id="addressInput" placeholder="Adresse eingeben..." style="width:200px;">
-    <button onclick="searchAddressForRouting()">Adresse suchen</button>
+    <button class="submit-btn" onclick="searchAddressForRouting()">Adresse suchen</button>
 </div>
 
 <!-- Charts Container mit Titel, Form links und Diagrammen rechts -->
@@ -233,7 +241,7 @@
                     </div>
                 </fieldset>
 
-                <button type="submit">Diagramme aktualisieren</button>
+                <button class="submit-btn" type="submit">Diagramme aktualisieren</button>
             </form>
         </div>
 
@@ -242,9 +250,8 @@
             <div style="margin-bottom:10px;">
                 <label for="stationForChart">Station für Markierung im Graphen auswählen:</label>
                 <select id="stationForChart">
-                    <option value="">-- Bitte wählen --</option>
                 </select>
-                <button onclick="highlightStationOnChart()">Station hervorheben</button>
+                <button class="submit-btn" onclick="highlightStationOnChart()">Station hervorheben</button>
             </div>
             <div id="pieChartContainer"></div>
             <div id="lineChartContainer"></div>
@@ -346,6 +353,7 @@
 
 
     function toggleDisplay(id, show) {
+        resetMarkers()
         const elem = document.getElementById(id);
         if (!elem) return;
         elem.style.display = show ? 'block' : 'none';

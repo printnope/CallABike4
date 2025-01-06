@@ -1,6 +1,5 @@
 
 .footer {
-    background-color: #dcdfdd;
 
     text-align: center;
     border-top: 1px solid #ddd;
@@ -14,12 +13,10 @@
 
 .footer-secondary-text {
     font-size: 0.9em;
-    color: #666;
 }
 
 .footer-contact,
 .footer-address {
     font-size: 0.85em;
-    color: #666;
 
 }

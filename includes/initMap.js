@@ -80,6 +80,9 @@ fetch(pathToJson)
     .catch(error => console.error('Fehler beim Laden der Stationsdaten:', error));
 
 function resetMarkers(){
+
+    window.map.setView([50.1109, 8.6821], 13);
+
     if ( routeControl) {
         window.map.removeControl(routeControl);
         window.map.removeLayer(window.userMarker);

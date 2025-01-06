@@ -197,23 +197,3 @@ function setMarkerColorBasedOnValue(marker, startInPeriod, endInPeriod, buchungs
     );
 }
 
-function visualizeWorkloadInTotal() {
-    let allMarkers = window.markerArray || [];
-    allMarkers.forEach(marker => {
-        let difference = marker.stationData.Anzahl_Startvorgaenge - marker.stationData.Anzahl_Endvorgaenge;
-        if (difference < 0) {
-            marker.setIcon(window.redIcon);
-        } else if (difference > 0) {
-            marker.setIcon(window.greenIcon);
-        } else {
-            marker.setIcon(window.defaultIcon);
-        }
-
-        marker.setPopupContent(
-            `<b>${marker.stationData.station_name}</b><br>
-             Startvorgaenge: ${marker.stationData.Anzahl_Startvorgaenge}<br>
-             Endvorgaenge: ${marker.stationData.Anzahl_Endvorgaenge}<br>
-             Differenz: ${difference}`
-        );
-    });
-}
