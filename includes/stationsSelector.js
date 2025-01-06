@@ -109,17 +109,23 @@ function fillStationDataTable(stationData) {
                 } else {
                     cell.textContent = '';
                 }
-            } else if (type === 'sortedList') {
+            }            else if (type === 'sortedList') {
                 if (typeof value === 'object' && value !== null) {
-                    // Sortiere nach Wert absteigend und formatiere als Liste
+                    // Sort and format entries, ignoring numeric keys
                     const sorted = Object.entries(value)
-                        .sort((a, b) => b[1] - a[1])
-                        .map(entry => `${entry[0]} (${entry[1]})`);
-                    cell.innerHTML = '<ul>' + sorted.map(item => `<li>${item}</li>`).join('') + '</ul>';
+                        .sort((a, b) => b[1] - a[1]) // Sort descending by value
+                        .map((entry, index) => {
+                            // Use the value directly for display
+                            const displayValue = Array.isArray(entry[1]) ? entry[1][1] : entry[1];
+                            return `${index + 1}. ${displayValue}`;
+                        });
+                    cell.innerHTML = '<ul>' + sorted.map(item => `${item}<br>`).join('') + '</ul>';
                 } else {
                     cell.textContent = '';
                 }
-            } else if (type === 'keyValueList') {
+            
+            } 
+        else if (type === 'keyValueList') {
                 if (typeof value === 'object' && value !== null) {
                     let listHTML = '<ul>';
                     for (const key in value) {

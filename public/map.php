@@ -60,18 +60,18 @@
         </tr>
         </thead>
         <tbody>
-        <tr><td>Station_ID</td><td id="Station_ID"></td></tr>
-        <tr><td>station_name</td><td id="station_name"></td></tr>
+        <tr><td>Stations-ID</td><td id="Station_ID"></td></tr>
+        <tr><td>Haltestellenname</td><td id="station_name"></td></tr>
         <tr><td>Latitude</td><td id="Latitude"></td></tr>
         <tr><td>Longitude</td><td id="Longitude"></td></tr>
         <tr><td>Anzahl Startvorgaenge</td><td id="Anzahl_Startvorgaenge"></td></tr>
         <tr><td>Anzahl Endvorgaenge</td><td id="Anzahl_Endvorgaenge"></td></tr>
-        <tr><td>Buchungsportale sortiert nach beliebtheit</td><td id="Buchungsportale_sortiert"></td></tr>
-        <tr><td>Stosszeit</td><td id="Stosszeit"></td></tr>
-        <tr><td>Beliebtester_Wochentag</td><td id="Beliebtester_Wochentag"></td></tr>
-        <tr><td>Beliebteste_Endstation</td><td id="Beliebteste_Endstation"></td></tr>
-        <tr><td>Gesamtzahl_Fahrten</td><td id="Gesamtzahl_Fahrten"></td></tr>
-        <tr><td>Beliebteste_Endstationen_sortiert</td><td id="Beliebteste_Endstationen_sortiert"></td></tr>
+        <tr><td>Beliebteste Buchungsportale</td><td id="Buchungsportale_sortiert"></td></tr>
+        <tr><td>Hauptverkehrszeit</td><td id="Stosszeit"></td></tr>
+        <tr><td>Beliebtester Wochentag</td><td id="Beliebtester_Wochentag"></td></tr>
+        <tr><td>Beliebtestes Ziel</td><td id="Beliebteste_Endstation"></td></tr>
+        <tr><td>Gesamtanzahl Fahrten</td><td id="Gesamtzahl_Fahrten"></td></tr>
+        <tr><td>Beliebteste Ziele</td><td id="Beliebteste_Endstationen_sortiert"></td></tr>
         </tbody>
     </table>
 </div>
