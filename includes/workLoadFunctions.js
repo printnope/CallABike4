@@ -40,6 +40,14 @@ document.addEventListener('DOMContentLoaded', function () {
             checkboxes.forEach(cb => cb.checked = alleCheckbox.checked);
         });
     }
+
+    const buchungsportaleCheckboxen = document.getElementById("buchungsportale-alle");
+    if (buchungsportaleCheckboxen) {
+        buchungsportaleCheckboxen.addEventListener('change', function () {
+            const checkboxes = document.querySelectorAll('input[name="buchungsportale"]:not(#buchungsportale-alle)');
+            checkboxes.forEach(cb => cb.checked = buchungsportaleCheckboxen.checked);
+        });
+    }
 });
 
 function filterMarkersByCriteria(startTime, endTime, weekdays, buchungstyp, threshold, selectedPortals) {

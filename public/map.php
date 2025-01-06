@@ -126,6 +126,7 @@
         <fieldset>
             <legend>Buchungsportale auswählen</legend>
             <div class="checkbox-group">
+                <label><input type="checkbox" name="buchungsportale" value="alle" id="buchungsportale-alle" checked>Alle</label>
                 <label><input type="checkbox" name="buchungsportale" value="iPhone CAB" checked> iPhone CAB</label>
                 <label><input type="checkbox" name="buchungsportale" value="Android CAB" checked> Android CAB</label>
                 <label><input type="checkbox" name="buchungsportale" value="IVR" checked> IVR</ label>
@@ -189,14 +190,14 @@
                 <fieldset>
                     <legend>Wochentage auswählen</legend>
                     <div class="checkbox-group">
-                        <label><input type="checkbox" name="wochentage" value="alle" checked> Alle</label>
-                        <label><input type="checkbox" name="wochentage" value="montag"> Montag</label>
-                        <label><input type="checkbox" name="wochentage" value="dienstag"> Dienstag</label>
-                        <label><input type="checkbox" name="wochentage" value="mittwoch"> Mittwoch</label>
-                        <label><input type="checkbox" name="wochentage" value="donnerstag"> Donnerstag</label>
-                        <label><input type="checkbox" name="wochentage" value="freitag"> Freitag</label>
-                        <label><input type="checkbox" name="wochentage" value="samstag"> Samstag</label>
-                        <label><input type="checkbox" name="wochentage" value="sonntag"> Sonntag</label>
+                        <label><input type="checkbox" name="wochentage" value="alle" id="chart-wochentage-alle" checked> Alle</label>
+                        <label><input type="checkbox" name="wochentage" value="montag" checked> Montag</label>
+                        <label><input type="checkbox" name="wochentage" value="dienstag" checked> Dienstag</label>
+                        <label><input type="checkbox" name="wochentage" value="mittwoch" checked> Mittwoch</label>
+                        <label><input type="checkbox" name="wochentage" value="donnerstag" checked> Donnerstag</label>
+                        <label><input type="checkbox" name="wochentage" value="freitag" checked> Freitag</label>
+                        <label><input type="checkbox" name="wochentage" value="samstag" checked> Samstag</label>
+                        <label><input type="checkbox" name="wochentage" value="sonntag" checked> Sonntag</label>
                     </div>
                 </fieldset>
 
@@ -229,6 +230,7 @@
                 <fieldset>
                     <legend>Buchungsportale auswählen</legend>
                     <div class="checkbox-group">
+                        <label><input type="checkbox" name="chartBuchungsportale" value="alle" id="chart-buchungsportale-alle" checked> Alle</label>
                         <label><input type="checkbox" name="chartBuchungsportale" value="iPhone CAB" checked> iPhone CAB</label>
                         <label><input type="checkbox" name="chartBuchungsportale" value="Android CAB" checked> Android CAB</label>
                         <label><input type="checkbox" name="chartBuchungsportale" value="IVR" checked> IVR</label>

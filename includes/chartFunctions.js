@@ -30,7 +30,22 @@ document.addEventListener('DOMContentLoaded', function() {
             updateCharts(lastChartAggregatedData);
         });
     }
+    const chartWochentageCheckboxen = document.getElementById("chart-wochentage-alle")
+    if(chartWochentageCheckboxen) {
+        chartWochentageCheckboxen.addEventListener('change', function(e){
+            const wochentageCB = document.querySelectorAll('input[name="wochentage"]:not(#chart-wochentage-alle)');
+            wochentageCB.forEach(cb => {cb.checked = chartWochentageCheckboxen.checked;});
+        });
+    }
 });
+
+const chartBuchungsportaleChartCheckboxen = document.getElementById("chart-buchungsportale-alle")
+if(chartBuchungsportaleChartCheckboxen) {
+    chartBuchungsportaleChartCheckboxen.addEventListener('change', function(e){
+        const portalCB = document.querySelectorAll('input[name="chartBuchungsportale"]:not(#chart-buchungsportale-alle)');
+        portalCB.forEach(cb => {cb.checked = chartBuchungsportaleChartCheckboxen.checked;});
+    });
+}
 
 function aggregateDataForCharts(stationsData, startTime, endTime, weekdays, buchungstyp, selectedPortals) {
     let aggregatedPortalCounts = {};
