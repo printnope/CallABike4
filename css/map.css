@@ -21,7 +21,13 @@ form{
     background-color: #f31d56;
     box-shadow: 0 6px 6px #808080;
 }
-
+input{
+    border-radius: 10px;
+    accent-color: #28a745;
+}
+select{
+    border-radius: 10px;
+}
 /* Tabelle mit schwarzen durchgehenden Strichen */
 table {
     border-collapse: collapse; /* Ränder der Zellen zusammenfassen */
