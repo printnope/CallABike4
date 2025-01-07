@@ -181,6 +181,8 @@
     <div id="chartsInner">
         <div id="chartFilterFormContainer">
             <form id="chartFilterForm" style="margin-bottom:20px;">
+            <button class="submit-btn" type="submit">Diagramme aktualisieren</button>
+
                 <fieldset>
                     <legend>Zeitraum-Modus</legend>
                     <label><input type="radio" name="zeitraumModus" value="stunden" checked> Stundenweise Darstellung</label>
@@ -243,7 +245,7 @@
                     </div>
                 </fieldset>
 
-                <button class="submit-btn" type="submit">Diagramme aktualisieren</button>
+         
             </form>
         </div>
 
@@ -361,25 +363,23 @@
         elem.style.display = show ? 'block' : 'none';
     }
     function toggleChartsDisplay() {
-        const container = document.getElementById('chartsContainer');
-        const isVisible = container.style.display === 'block';
+    const container = document.getElementById('chartsContainer');
+    const isVisible = container.style.display === 'block';
 
-        if (isVisible) {
-            // Wenn bereits sichtbar, ausblenden
-            toggleDisplay('chartsContainer', false);
-        } else {
-            // Andernfalls anzeigen und andere Bereiche ausblenden
-            toggleDisplay('filterForWorkload', false);
-            toggleDisplay('searchForStationDiv', false);
-            toggleDisplay('addressSearchDiv', false);
-            toggleDisplay('filterForFlowLines', false);
-            toggleDisplay('chartsContainer', true);
-            // Wenn Charts angezeigt werden, Stationen in Dropdown stationForChart füllen:
-            if (window.stationsData) {
-                populateStationSelectForChart(window.stationsData);
-            }
+    if (isVisible) {
+        // Hide the charts container
+        container.style.display = 'none';
+    } else {
+        // Show the charts container
+        container.style.display = 'block';
+
+        // Simulate form submission to generate charts with current default values
+        const chartFilterForm = document.getElementById('chartFilterForm');
+        if (chartFilterForm) {
+            chartFilterForm.dispatchEvent(new Event('submit'));
         }
     }
+}
 
 </script>
 

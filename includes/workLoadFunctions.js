@@ -173,17 +173,17 @@ function setMarkerColorBasedOnValue(marker, startInPeriod, endInPeriod, buchungs
 
     if (buchungstyp === 'abholung') {
         if (startInPeriod < threshold) {
-            marker.setIcon(window.redIcon);
-        } else if (startInPeriod > threshold) {
             marker.setIcon(window.greenIcon);
+        } else if (startInPeriod > threshold) {
+            marker.setIcon(window.redIcon);
         } else {
             marker.setIcon(window.defaultIcon);
         }
     } else if (buchungstyp === 'abgabe') {
         if (endInPeriod < threshold) {
-            marker.setIcon(window.redIcon);
-        } else if (endInPeriod > threshold) {
             marker.setIcon(window.greenIcon);
+        } else if (endInPeriod > threshold) {
+            marker.setIcon(window.redIcon);
         } else {
             marker.setIcon(window.defaultIcon);
         }
