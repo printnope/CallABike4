@@ -79,19 +79,20 @@
 <!-- Filter Gesamtzahlen -->
 <div id="filterForWorkload" style="display: none;">
     <form id="filterForm">
-        <fieldset>
-            <legend>Wochentage auswählen</legend>
-            <div class="checkbox-group">
-                <label><input type="checkbox" name="wochentage" value="alle" id="alle" checked> Alle</label>
-                <label><input type="checkbox" name="wochentage" value="montag" checked> Montag</label>
-                <label><input type="checkbox" name="wochentage" value="dienstag" checked> Dienstag</label>
-                <label><input type="checkbox" name="wochentage" value="mittwoch" checked> Mittwoch</label>
-                <label><input type="checkbox" name="wochentage" value="donnerstag" checked> Donnerstag</label>
-                <label><input type="checkbox" name="wochentage" value="freitag" checked> Freitag</label>
-                <label><input type="checkbox" name="wochentage" value="samstag" checked> Samstag</label>
-                <label><input type="checkbox" name="wochentage" value="sonntag" checked> Sonntag</label>
-            </div>
-        </fieldset>
+    <fieldset>
+    <legend>Wochentage auswählen</legend>
+    <div class="checkbox-group"> 
+        <label><input type="checkbox" name="wochentage" value="montag" checked> Montag</label>
+        <label><input type="checkbox" name="wochentage" value="dienstag" checked> Dienstag</label>
+        <label><input type="checkbox" name="wochentage" value="mittwoch" checked> Mittwoch</label>
+        <label><input type="checkbox" name="wochentage" value="donnerstag" checked> Donnerstag</label>
+        <label><input type="checkbox" name="wochentage" value="freitag" checked> Freitag</label>
+        <label><input type="checkbox" name="wochentage" value="samstag" checked> Samstag</label>
+        <label><input type="checkbox" name="wochentage" value="sonntag" checked> Sonntag</label>
+     </div>
+     <button type="button" id="selectAllWeekdaysButton">Alle auswählen</button>
+    </fieldset>
+
 
         <fieldset>
             <legend>Uhrzeiten auswählen</legend>
@@ -124,20 +125,21 @@
         </fieldset>
 
         <fieldset>
-            <legend>Buchungsportale auswählen</legend>
-            <div class="checkbox-group">
-                <label><input type="checkbox" name="buchungsportale" value="alle" id="buchungsportale-alle" checked>Alle</label>
-                <label><input type="checkbox" name="buchungsportale" value="iPhone CAB" checked> iPhone CAB</label>
-                <label><input type="checkbox" name="buchungsportale" value="Android CAB" checked> Android CAB</label>
-                <label><input type="checkbox" name="buchungsportale" value="IVR" checked> IVR</ label>
-                <label><input type="checkbox" name="buchungsportale" value="Windows" checked> Windows</label>
-                <label><input type="checkbox" name="buchungsportale" value="iPhone SRH" checked> iPhone SRH</label>
-                <label><input type="checkbox" name="buchungsportale" value="LIDL-BIKE" checked> LIDL-BIKE</label>
-                <label><input type="checkbox" name="buchungsportale" value="Android SRH" checked> Android SRH</label>
-                <label><input type="checkbox" name="buchungsportale" value="Techniker F_5 (-67212-)" checked> Techniker F_5 (-67212-)</label>
-                <label><input type="checkbox" name="buchungsportale" value="iPhone KON" checked> iPhone KON</label>
-            </div>
+        <legend>Buchungsportale auswählen</legend>
+        <div class="checkbox-group">
+        <label><input type="checkbox" name="buchungsportale" value="iPhone CAB" checked> iPhone CAB</label>
+        <label><input type="checkbox" name="buchungsportale" value="Android CAB" checked> Android CAB</label>
+        <label><input type="checkbox" name="buchungsportale" value="IVR" checked> IVR</label>
+        <label><input type="checkbox" name="buchungsportale" value="Windows" checked> Windows</label>
+        <label><input type="checkbox" name="buchungsportale" value="iPhone SRH" checked> iPhone SRH</label>
+        <label><input type="checkbox" name="buchungsportale" value="LIDL-BIKE" checked> LIDL-BIKE</label>
+        <label><input type="checkbox" name="buchungsportale" value="Android SRH" checked> Android SRH</label>
+        <label><input type="checkbox" name="buchungsportale" value="Techniker F_5 (-67212-)" checked> Techniker F_5 (-67212-)</label>
+        <label><input type="checkbox" name="buchungsportale" value="iPhone KON" checked> iPhone KON</label>
+        </div>
+        <button type="button" id="selectAllPortalsButton">Alle auswählen</button> <!-- Added toggle button -->
         </fieldset>
+
 
         <fieldset>
             <legend>Schwellenwert festlegen</legend>

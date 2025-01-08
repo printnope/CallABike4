@@ -59,9 +59,10 @@ function aggregateDataForCharts(stationsData, startTime, endTime, weekdays, buch
         }
     });
 
-    let usedWeekdays = weekdays.includes('alle') ? weekdayShorts : weekdayShorts.filter(wd => {
-        return weekdays.map(w => getKurzWochentag(w)).includes(wd);
-    });
+let usedWeekdays = weekdayShorts.filter(wd => {
+    return weekdays.map(w => getKurzWochentag(w)).includes(wd);
+});
+
 
     stationsData.forEach(stationData => {
         const {startInPeriod, endInPeriod, portalCounts, hourData} = getStartEndInPeriodForCharts(stationData, weekdays, startTime, endTime, selectedPortals, buchungstyp);

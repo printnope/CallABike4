@@ -10,7 +10,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const endTime = document.getElementById('bis').value;
 
             const weekdayCheckboxes = document.querySelectorAll('input[name="wochentage"]:checked');
-            const selectedWeekdays = Array.from(weekdayCheckboxes).map(cb => cb.value);
+            const selectedWeekdays = Array.from(new Set(
+                Array.from(weekdayCheckboxes)
+                    .map(cb => cb.value)
+                    .filter(value => value !== 'alle') // Exclude "alle"
+            ));
+            
 
             const buchungstypRadio = document.querySelector('input[name="buchungstyp"]:checked');
             const buchungstyp = buchungstypRadio ? buchungstypRadio.value : 'beides';
@@ -20,6 +25,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const thresholdInput = document.getElementById('threshold');
             const threshold = parseInt(thresholdInput.value, 10);
+
+            console.log('Selected Weekdays:', selectedWeekdays);
+            console.log('Selected Portals:', selectedPortals);
 
             // Marker filtern
             filterMarkersByCriteria(startTime, endTime, selectedWeekdays, buchungstyp, threshold, selectedPortals);
@@ -31,23 +39,34 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+ // Select/Deselect all weekdays functionality
+ const selectAllWeekdaysButton = document.getElementById('selectAllWeekdaysButton');
+ if (selectAllWeekdaysButton) {
+     selectAllWeekdaysButton.addEventListener('click', function () {
+         const weekdayCheckboxes = document.querySelectorAll('input[name="wochentage"]');
+         const allChecked = Array.from(weekdayCheckboxes).every(cb => cb.checked);
 
+         // Toggle all checkboxes
+         weekdayCheckboxes.forEach(cb => cb.checked = !allChecked);
 
-    const alleCheckbox = document.getElementById('alle');
-    if (alleCheckbox) {
-        alleCheckbox.addEventListener('change', function () {
-            const checkboxes = document.querySelectorAll('input[name="wochentage"]:not(#alle)');
-            checkboxes.forEach(cb => cb.checked = alleCheckbox.checked);
-        });
-    }
+         // Update button text
+         selectAllWeekdaysButton.textContent = allChecked ? 'Alle auswählen' : 'Alle abwählen';
+     });
+ }
+ const selectAllPortalsButton = document.getElementById('selectAllPortalsButton');
+ if (selectAllPortalsButton) {
+    selectAllPortalsButton.addEventListener('click', function () {
+         const weekdayCheckboxes = document.querySelectorAll('input[name="buchungsportale"]:not(#buchungsportale-alle)');
+         const allChecked = Array.from(weekdayCheckboxes).every(cb => cb.checked);
 
-    const buchungsportaleCheckboxen = document.getElementById("buchungsportale-alle");
-    if (buchungsportaleCheckboxen) {
-        buchungsportaleCheckboxen.addEventListener('change', function () {
-            const checkboxes = document.querySelectorAll('input[name="buchungsportale"]:not(#buchungsportale-alle)');
-            checkboxes.forEach(cb => cb.checked = buchungsportaleCheckboxen.checked);
-        });
-    }
+         // Toggle all checkboxes
+         weekdayCheckboxes.forEach(cb => cb.checked = !allChecked);
+
+         // Update button text
+         selectAllPortalsButton.textContent = allChecked ? 'Alle auswählen' : 'Alle abwählen';
+     });
+ }
+
 });
 
 function filterMarkersByCriteria(startTime, endTime, weekdays, buchungstyp, threshold, selectedPortals) {
