@@ -1,11 +1,11 @@
 
 
 h1{
-    text-align: center;
+    text-align: center;margin-left: 10px;
 }
 
 #map {
-    height: 600px;
+    height: 65vh; /* viewport height - adaptive depending on user */
     width: 100%;
     margin-bottom: 20px;
     position: relative; /* Für die absolute Positionierung der Legende */

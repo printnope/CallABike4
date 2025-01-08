@@ -20,7 +20,7 @@
 </head>
 <body>
 <div id="header-div">
-    <img src="../includes/Bildschirmfoto_20250106_122001.png" alt="Bildschirmfoto_20250106_122001.png">
+    <img src="../includes/Bildschirmfoto_20250106_122001.png" alt="DB-Logo">
     <h1 id="headline">Call A Bike</h1>
 </div>
 
@@ -53,12 +53,7 @@
 <!-- Stationssuche -->
 <div id="searchForStationDiv" style="display: none;">
     <table id="stationDataTable" border="1" cellpadding="5" style="margin-top:10px;">
-        <thead>
-        <tr>
-            <th>Key</th>
-            <th>Value</th>
-        </tr>
-        </thead>
+
         <tbody>
         <tr><td>Stations-ID</td><td id="Station_ID"></td></tr>
         <tr><td>Haltestellenname</td><td id="station_name"></td></tr>
@@ -296,6 +291,7 @@
             toggleDisplay('addressSearchDiv', false);
             toggleDisplay('filterForFlowLines', false);
             document.getElementById('chartsContainer').style.display = 'none';
+            filterDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
 
@@ -314,9 +310,13 @@
             toggleDisplay('addressSearchDiv', false);
             toggleDisplay('filterForFlowLines', false);
             document.getElementById('chartsContainer').style.display = 'none';
+            
             // Stationsauswahl nur einmal initialisieren
             initializeStationSelectionUI(window.markerArray);
+            searchDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+           
         }
+        
     }
 
 
@@ -335,6 +335,7 @@
             toggleDisplay('addressSearchDiv', true);
             toggleDisplay('filterForFlowLines', false);
             document.getElementById('chartsContainer').style.display = 'none';
+            addressSearchDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
 
@@ -355,6 +356,8 @@
             toggleDisplay('addressSearchDiv', false);
             toggleDisplay('filterForFlowLines', true);
             document.getElementById('chartsContainer').style.display = 'none';
+            flowLinesDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
         }
     }
 
