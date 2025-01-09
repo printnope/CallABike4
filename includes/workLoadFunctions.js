@@ -207,7 +207,7 @@ function setMarkerColorBasedOnValue(marker, startInPeriod, endInPeriod, buchungs
             marker.setIcon(window.defaultIcon);
         }
     } else if (buchungstyp === 'beides') {
-        if (difference < threshold) {
+        if (difference < threshold || difference < -threshold) {
             marker.setIcon(window.redIcon);
         } else if (difference > threshold) {
             marker.setIcon(window.greenIcon);
