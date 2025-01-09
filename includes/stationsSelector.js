@@ -86,11 +86,16 @@ function initializeStationSelectionUI(markers) {
 }
 
 function populateStationsSelect(selectElement, stations) {
+    // Clear existing options, but keep the default one
     while (selectElement.options.length > 1) {
         selectElement.remove(1);
     }
 
-    stations.forEach(station => {
+    // Sort stations alphabetically by station_name
+    const sortedStations = stations.sort((a, b) => a.station_name.localeCompare(b.station_name));
+
+    // Populate the dropdown with sorted stations
+    sortedStations.forEach(station => {
         const option = document.createElement('option');
         option.value = station.Station_ID;
         option.textContent = station.station_name;

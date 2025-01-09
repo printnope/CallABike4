@@ -31,6 +31,7 @@
         <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png');"></i> Entspricht dem Schwellenwert<br>
         <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png');"></i> Liegt über dem Schwellenwert<br>
         <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png');"></i> Liegt unter dem Schwellenwert<br>
+        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png');"></i> Liegt unter dem Schwellenwert<br>
     </div>
 </div>
 
@@ -187,18 +188,18 @@
                 </fieldset>
 
                 <fieldset>
-                    <legend>Wochentage auswählen</legend>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="wochentage" value="alle" id="chart-wochentage-alle" checked> Alle</label>
-                        <label><input type="checkbox" name="wochentage" value="montag" checked> Montag</label>
-                        <label><input type="checkbox" name="wochentage" value="dienstag" checked> Dienstag</label>
-                        <label><input type="checkbox" name="wochentage" value="mittwoch" checked> Mittwoch</label>
-                        <label><input type="checkbox" name="wochentage" value="donnerstag" checked> Donnerstag</label>
-                        <label><input type="checkbox" name="wochentage" value="freitag" checked> Freitag</label>
-                        <label><input type="checkbox" name="wochentage" value="samstag" checked> Samstag</label>
-                        <label><input type="checkbox" name="wochentage" value="sonntag" checked> Sonntag</label>
-                    </div>
-                </fieldset>
+    <legend>Wochentage auswählen</legend>
+    <div class="checkbox-group"> 
+        <label><input type="checkbox" name="wochentage" value="montag" checked> Montag</label>
+        <label><input type="checkbox" name="wochentage" value="dienstag" checked> Dienstag</label>
+        <label><input type="checkbox" name="wochentage" value="mittwoch" checked> Mittwoch</label>
+        <label><input type="checkbox" name="wochentage" value="donnerstag" checked> Donnerstag</label>
+        <label><input type="checkbox" name="wochentage" value="freitag" checked> Freitag</label>
+        <label><input type="checkbox" name="wochentage" value="samstag" checked> Samstag</label>
+        <label><input type="checkbox" name="wochentage" value="sonntag" checked> Sonntag</label>
+     </div>
+     <button type="button" id="chartSelectAllWeekdaysButton">Alle auswählen</button>
+    </fieldset>
 
                 <fieldset>
                     <legend>Uhrzeiten auswählen</legend>
@@ -227,20 +228,20 @@
                 </fieldset>
 
                 <fieldset>
-                    <legend>Buchungsportale auswählen</legend>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="chartBuchungsportale" value="alle" id="chart-buchungsportale-alle" checked> Alle</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone CAB" checked> iPhone CAB</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="Android CAB" checked> Android CAB</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="IVR" checked> IVR</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="Windows" checked> Windows</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone SRH" checked> iPhone SRH</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="LIDL-BIKE" checked> LIDL-BIKE</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="Android SRH" checked> Android SRH</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="Techniker F_5 (-67212-)" checked> Techniker F_5 (-67212-)</label>
-                        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone KON" checked> iPhone KON</label>
-                    </div>
-                </fieldset>
+        <legend>Buchungsportale auswählen</legend>
+        <div class="checkbox-group">
+        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone CAB" checked> iPhone CAB</label>
+        <label><input type="checkbox" name="chartBuchungsportale" value="Android CAB" checked> Android CAB</label>
+        <label><input type="checkbox" name="chartBuchungsportale" value="IVR" checked> IVR</label>
+        <label><input type="checkbox" name="chartBuchungsportale" value="Windows" checked> Windows</label>
+        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone SRH" checked> iPhone SRH</label>
+        <label><input type="checkbox" name="chartBuchungsportale" value="LIDL-BIKE" checked> LIDL-BIKE</label>
+        <label><input type="checkbox" name="chartBuchungsportale" value="Android SRH" checked> Android SRH</label>
+        <label><input type="checkbox" name="chartBuchungsportale" value="Techniker F_5 (-67212-)" checked> Techniker F_5 (-67212-)</label>
+        <label><input type="checkbox" name="chartBuchungsportale" value="iPhone KON" checked> iPhone KON</label>
+        </div>
+        <button type="button" id="chartSelectAllPortalsButton">Alle auswählen</button> <!-- Added toggle button -->
+        </fieldset>
 
          
             </form>
@@ -369,21 +370,29 @@
         elem.style.display = show ? 'block' : 'none';
     }
     function toggleChartsDisplay() {
-    const container = document.getElementById('chartsContainer');
-    const isVisible = container.style.display === 'block';
+    const chartsContainer = document.getElementById('chartsContainer');
+    const isVisible = chartsContainer.style.display === 'block';
 
     if (isVisible) {
         // Hide the charts container
-        container.style.display = 'none';
+        toggleDisplay('chartsContainer', false);
     } else {
-        // Show the charts container
-        container.style.display = 'block';
+        // Andernfalls anzeigen und andere Bereiche ausblenden
+        resetMarkers();
+        toggleDisplay('filterForWorkload', false);
+        toggleDisplay('searchForStationDiv', false);
+        toggleDisplay('addressSearchDiv', false);
+        toggleDisplay('filterForFlowLines', false);
+        toggleDisplay('chartsContainer', true);
 
         // Simulate form submission to generate charts with current default values
         const chartFilterForm = document.getElementById('chartFilterForm');
         if (chartFilterForm) {
             chartFilterForm.dispatchEvent(new Event('submit'));
         }
+
+        // Scroll to the charts container
+        chartsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
 

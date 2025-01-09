@@ -6,15 +6,15 @@ let pieChart;
 let lineChart;
 let lastChartAggregatedData = null;
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const chartFilterForm = document.getElementById('chartFilterForm');
-    if(chartFilterForm) {
-        chartFilterForm.addEventListener('submit', function(e){
+    if (chartFilterForm) {
+        chartFilterForm.addEventListener('submit', function (e) {
             e.preventDefault();
             const mode = document.querySelector('input[name="zeitraumModus"]:checked').value;
             const wochentageCB = document.querySelectorAll('input[name="wochentage"]:checked');
             let weekdays = Array.from(wochentageCB).map(cb => cb.value);
-            if(weekdays.length===0) weekdays = ['alle'];
+            if (weekdays.length === 0) weekdays = ['alle'];
 
             const chartVon = document.getElementById('chartVon').value;
             const chartBis = document.getElementById('chartBis').value;
@@ -26,26 +26,42 @@ document.addEventListener('DOMContentLoaded', function() {
             const selectedPortals = Array.from(portalCB).map(cb => cb.value);
 
             const aggregatedData = aggregateDataForCharts(window.stationsData, chartVon, chartBis, weekdays, buchungstyp, selectedPortals);
-            lastChartAggregatedData = {mode: mode, data: aggregatedData};
+            lastChartAggregatedData = { mode: mode, data: aggregatedData };
             updateCharts(lastChartAggregatedData);
         });
     }
-    const chartWochentageCheckboxen = document.getElementById("chart-wochentage-alle")
-    if(chartWochentageCheckboxen) {
-        chartWochentageCheckboxen.addEventListener('change', function(e){
-            const wochentageCB = document.querySelectorAll('input[name="wochentage"]:not(#chart-wochentage-alle)');
-            wochentageCB.forEach(cb => {cb.checked = chartWochentageCheckboxen.checked;});
+
+    // Add Select All/Unselect All for weekdays
+    const chartSelectAllWeekdaysButton = document.getElementById('chartSelectAllWeekdaysButton');
+    if (chartSelectAllWeekdaysButton) {
+        chartSelectAllWeekdaysButton.addEventListener('click', function () {
+            const weekdayCheckboxes = document.querySelectorAll('input[name="wochentage"]');
+            const allChecked = Array.from(weekdayCheckboxes).every(cb => cb.checked);
+
+            // Toggle all checkboxes
+            weekdayCheckboxes.forEach(cb => (cb.checked = !allChecked));
+
+            // Update button text
+            chartSelectAllWeekdaysButton.textContent = allChecked ? 'Alle auswählen' : 'Alle abwählen';
+        });
+    }
+
+    // Add Select All/Unselect All for portals
+    const chartSelectAllPortalsButton = document.getElementById('chartSelectAllPortalsButton');
+    if (chartSelectAllPortalsButton) {
+        chartSelectAllPortalsButton.addEventListener('click', function () {
+            const portalCheckboxes = document.querySelectorAll('input[name="chartBuchungsportale"]');
+            const allChecked = Array.from(portalCheckboxes).every(cb => cb.checked);
+
+            // Toggle all checkboxes
+            portalCheckboxes.forEach(cb => (cb.checked = !allChecked));
+
+            // Update button text
+            chartSelectAllPortalsButton.textContent = allChecked ? 'Alle auswählen' : 'Alle abwählen';
         });
     }
 });
 
-const chartBuchungsportaleChartCheckboxen = document.getElementById("chart-buchungsportale-alle")
-if(chartBuchungsportaleChartCheckboxen) {
-    chartBuchungsportaleChartCheckboxen.addEventListener('change', function(e){
-        const portalCB = document.querySelectorAll('input[name="chartBuchungsportale"]:not(#chart-buchungsportale-alle)');
-        portalCB.forEach(cb => {cb.checked = chartBuchungsportaleChartCheckboxen.checked;});
-    });
-}
 
 function aggregateDataForCharts(stationsData, startTime, endTime, weekdays, buchungstyp, selectedPortals) {
     let aggregatedPortalCounts = {};
@@ -231,51 +247,89 @@ function buchungstypFilterMatch(buchungstyp, portalData) {
 }
 
 function updateCharts(chartConfig) {
-    if(!chartConfig) return;
-    const {mode, data} = chartConfig;
+    if (!chartConfig) return;
+
+    const { mode, data } = chartConfig;
     const container = document.getElementById('chartsContainer');
-    if(container.style.display === 'none' || container.style.display==='') {
+    if (container.style.display === 'none' || container.style.display === '') {
         return;
     }
 
+    // Prepare data for the pie chart
     const portalDataArray = [];
     let totalPortalCount = 0;
-    for(let p in data.portals) {
+    for (let p in data.portals) {
         totalPortalCount += data.portals[p];
     }
-    for(let p in data.portals) {
-        let perc = totalPortalCount===0 ? 0 : (data.portals[p]/totalPortalCount)*100;
-        portalDataArray.push({name: p, y: perc});
+    for (let p in data.portals) {
+        let perc = totalPortalCount === 0 ? 0 : (data.portals[p] / totalPortalCount) * 100;
+        portalDataArray.push({ name: p, y: perc });
     }
 
+    // Prepare data for the line chart
     let lineCategories = [];
     let lineData = [];
-    if(mode === 'stunden') {
-        // Durchschnitt pro Stunde (über alle Stationen)
-        let summedHours = [];
-        for(let h=0;h<24;h++){
+
+    if (mode === 'stunden') {
+        // Hourly aggregation
+        for (let h = 0; h < 24; h++) {
             let total = 0;
             data.weekdays.forEach(wd => {
                 total += (data.timeData[wd][h].start + data.timeData[wd][h].end);
             });
-            summedHours.push(total);
-            lineCategories.push(h+":00");
+            lineData.push(total);
+            lineCategories.push(h + ":00");
         }
-        lineData = summedHours;
-    } else {
-        // Durchschnitt pro Tag (über alle Stationen)
+    } else if (mode === 'tage') {
+        // Daily aggregation
         data.weekdays.forEach(wd => {
-            let total=0;
-            for(let h=0;h<24;h++){
+            let total = 0;
+            for (let h = 0; h < 24; h++) {
                 total += (data.timeData[wd][h].start + data.timeData[wd][h].end);
             }
-            lineCategories.push(wd);
             lineData.push(total);
+            lineCategories.push(wd);
         });
     }
 
+    // Clear all existing series except the default one
+    if (lineChart) {
+        while (lineChart.series.length > 1) {
+            lineChart.series[lineChart.series.length - 1].remove(false);
+        }
+    }
+
+    // Update or recreate the line chart
+    if (!lineChart) {
+        lineChart = Highcharts.chart('lineChartContainer', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: mode === 'stunden' ? 'Hourly Chart' : 'Daily Chart'
+            },
+            xAxis: {
+                categories: lineCategories
+            },
+            yAxis: {
+                title: {
+                    text: 'Average Bookings'
+                }
+            },
+            series: [{
+                name: 'Average',
+                data: lineData
+            }]
+        });
+    } else {
+        // Update existing chart
+        lineChart.setTitle({ text: mode === 'stunden' ? 'Hourly Chart' : 'Daily Chart' });
+        lineChart.xAxis[0].setCategories(lineCategories, false);
+        lineChart.series[0].setData(lineData, true);
+    }
+
+    // Update or recreate the pie chart
     createOrUpdatePieChart(portalDataArray);
-    createOrUpdateLineChart(lineCategories, lineData);
 }
 
 function createOrUpdatePieChart(data) {
@@ -330,12 +384,12 @@ function createOrUpdateLineChart(categories, data) {
     }
 }
 
-function highlightStationOnChart(){
+function highlightStationOnChart() {
     const stationName = document.getElementById('stationForChart').value;
-    if(!stationName || !lineChart || !lastChartAggregatedData) return;
+    if (!stationName || !lineChart || !lastChartAggregatedData) return;
 
     const chartFilterForm = document.getElementById('chartFilterForm');
-    if(!chartFilterForm) return;
+    if (!chartFilterForm) return;
     const formData = new FormData(chartFilterForm);
 
     const modeVal = formData.get('zeitraumModus') || 'stunden';
@@ -346,66 +400,60 @@ function highlightStationOnChart(){
     const selectedPortals = formData.getAll('chartBuchungsportale');
 
     let stationObj = window.stationsData.find(st => st.station_name === stationName);
-    if(!stationObj) return;
+    if (!stationObj) return;
 
-    const {hourData} = getStationHourDataForCharts(stationObj, weekdaysForm.length>0?weekdaysForm:['alle'], startTime, endTime, selectedPortals, buchungstyp);
+    const { hourData } = getStationHourDataForCharts(
+        stationObj,
+        weekdaysForm.length > 0 ? weekdaysForm : ['alle'],
+        startTime,
+        endTime,
+        selectedPortals,
+        buchungstyp
+    );
 
-    // Entferne eine eventuell bereits vorhandene Serie dieser Station, um doppelte Linien zu vermeiden
-    let existingSeriesIndex = lineChart.series.findIndex(s => s.name === stationName);
+    // Remove previous highlighted series
+    const existingSeriesIndex = lineChart.series.findIndex(s => s.name === stationName);
     if (existingSeriesIndex !== -1) {
         lineChart.series[existingSeriesIndex].remove(false);
     }
 
-    if(modeVal==='stunden') {
-        // Stundenweise Darstellung
-        let categories = lineChart.xAxis[0].categories; // h:00
-        let stationDataArray = [];
-
-        const usedWeekdays = weekdaysForm.includes('alle')? ['Mo','Di','Mi','Do','Fr','Sa','So'] :
-            ['Mo','Di','Mi','Do','Fr','Sa','So'].filter(wd => weekdaysForm.map(w=>getKurzWochentag(w)).includes(wd));
-
+    let stationDataArray = [];
+    if (modeVal === 'stunden') {
+        // Hourly data
         for (let h = 0; h < 24; h++) {
             let sumHour = 0;
-            usedWeekdays.forEach(wd => {
-                sumHour += hourData[wd][h].start + hourData[wd][h].end;
+            weekdaysForm.forEach(wd => {
+                let shortWd = getKurzWochentag(wd);
+                if (hourData[shortWd]) {
+                    sumHour += hourData[shortWd][h].start + hourData[shortWd][h].end;
+                }
             });
             stationDataArray.push(sumHour);
         }
-
-        // Neue Serie für diese Station
-        lineChart.addSeries({
-            name: stationName,
-            data: stationDataArray,
-            color: '#ff0000',
-            marker: {
-                symbol: 'circle'
-            }
-        }, true);
-
     } else {
-        // Tagesweise Darstellung
-        let categories = lineChart.xAxis[0].categories; // Wochentage
-        let stationDataArray = [];
-
-        categories.forEach((wd) => {
-            let total=0;
-            for(let h=0;h<24;h++){
-                total+=hourData[wd][h].start + hourData[wd][h].end;
+        // Daily data
+        weekdaysForm.forEach(wd => {
+            let shortWd = getKurzWochentag(wd);
+            let total = 0;
+            for (let h = 0; h < 24; h++) {
+                if (hourData[shortWd]) {
+                    total += hourData[shortWd][h].start + hourData[shortWd][h].end;
+                }
             }
             stationDataArray.push(total);
         });
-
-        // Neue Serie für diese Station
-        lineChart.addSeries({
-            name: stationName,
-            data: stationDataArray,
-            color: '#ff0000',
-            marker: {
-                symbol: 'circle'
-            }
-        }, true);
     }
-}
+
+    // Add the new series
+    lineChart.addSeries({
+        name: stationName,
+        data: stationDataArray,
+        color: '#ff0000',
+        marker: {
+            symbol: 'circle'
+        }
+    }, true);
+}   
 
 function getStationHourDataForCharts(stationData, weekdays, startTime, endTime, selectedPortals, buchungstyp) {
     const weekdayHours = ['Mo','Di','Mi','Do','Fr','Sa','So'];
