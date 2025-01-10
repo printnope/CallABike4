@@ -398,7 +398,7 @@
 </script>
 
 <?php
-include "../includes/php/footer.php";
+include "../includes/footer.php";
 ?>
 
 </body>
