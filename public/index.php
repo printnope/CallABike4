@@ -1,8 +1,8 @@
 <?php
 
 
-$initializePath ='../includes/initialize.php';
-$createJsonPath = '../includes/createJson.php';
+$initializePath ='../data/initialize.php';
+$createJsonPath = '../data/createJson.php';
 $pathToJsonFile = '../data/stations.json';
 $isInitialize = false;
 
