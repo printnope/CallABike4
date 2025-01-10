@@ -20,7 +20,7 @@
 </head>
 <body>
 <div id="header-div">
-    <img src="../includes/Bildschirmfoto_20250106_122001.png" alt="DB-Logo">
+    <img src="../includes/dblogo.png" alt="DB-Logo">
     <h1 id="headline">Call A Bike</h1>
 </div>
 
@@ -31,24 +31,23 @@
         <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png');"></i> Entspricht dem Schwellenwert<br>
         <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png');"></i> Liegt über dem Schwellenwert<br>
         <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png');"></i> Liegt unter dem Schwellenwert<br>
-        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png');"></i> Liegt unter dem Schwellenwert<br>
     </div>
 </div>
 
 <div class="button-group">
     <div id = "visualize-map-container">
-        <button onclick="showFilterForm()">Filter Gesamtzahlen</button>
-        <button onclick="showFlowLinesForm()">Show Flow Lines</button>
+        <button onclick="showFilterForm()"> Filtern aller Stationen </button>
+        <button onclick="showFlowLinesForm()">Beliebteste Verbindungen</button>
     </div>
     <div id = "routing-container">
-        <button onclick="startRoutingFromCurrentPosition()">Routing from current position</button>
-        <button onclick="showAddressSearch()">Routing from address</button>
+        <button onclick="startRoutingFromCurrentPosition()">Route von aktueller Position</button>
+        <button onclick="showAddressSearch()">Route von beliebiger Adresse</button>
     </div>
     <div id = "analyze-container">
-        <button onclick="toggleChartsDisplay()">Show Charts</button>
-        <button onclick="showSearchStation()">Search for Station</button>
+        <button onclick="toggleChartsDisplay()">Diagramme</button>
+        <button onclick="showSearchStation()">Details zu einer Station</button>
     </div>
-    <button onclick="resetMarkers()">Reset</button>
+    <button onclick="resetMarkers()">Karte zurücksetzen</button>
 </div>
 
 <!-- Stationssuche -->
