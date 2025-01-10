@@ -19,7 +19,7 @@ if ($isInitialize) {
 }
 
 
-if (!file_exists($pathToJsonFile) || (time() - filemtime($pathToJsonFile)) > 3600) {
+if (!file_exists($pathToJsonFile) || (time() - filemtime($pathToJsonFile)) > 36000000000) {
     // Zeitmessung für createJson.php
     $jsonStartTime = microtime(true);
 
