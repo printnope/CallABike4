@@ -20,7 +20,7 @@
 </head>
 <body>
 <div id="header-div">
-    <img src="../includes/dblogo.png" alt="DB-Logo">
+    <img src="../includes/images/dblogo.png" alt="DB-Logo">
     <h1 id="headline">Call A Bike</h1>
 </div>
 
@@ -266,13 +266,13 @@
 <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="../includes/initMap.js"></script>
-<script src="../includes/workLoadFunctions.js"></script>
-<script src="../includes/stationsSelector.js"></script>
-<script src="../includes/routingFromCurrentPosition.js"></script>
-<script src="../includes/adressSearchRouting.js"></script>
-<script src="../includes/flowLinesFunctions.js"></script>
-<script src="../includes/chartFunctions.js"></script>
+<script src="../includes/javascript/initMap.js"></script>
+<script src="../includes/javascript/workLoadFunctions.js"></script>
+<script src="../includes/javascript/stationsSelector.js"></script>
+<script src="../includes/javascript/routingFromCurrentPosition.js"></script>
+<script src="../includes/javascript/adressSearchRouting.js"></script>
+<script src="../includes/javascript/flowLinesFunctions.js"></script>
+<script src="../includes/javascript/chartFunctions.js"></script>
 <script>
     let isShowAddressSearch = false;
 
@@ -398,7 +398,7 @@
 </script>
 
 <?php
-include "../includes/footer.php";
+include "../includes/php/footer.php";
 ?>
 
 </body>
