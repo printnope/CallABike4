@@ -6,138 +6,91 @@ function initializeStationSelectionUI(markers) {
     const searchDiv = document.getElementById('searchForStationDiv');
     if (!searchDiv) return;
 
-    // Ensure it only initializes once
-    if (document.getElementById('station-autocomplete')) return;
+    // Nur einmal ausführen
+    if (document.getElementById('stations-select-container')) return;
 
-    // Create container for the autocomplete input
     const container = document.createElement('div');
-    container.id = 'station-autocomplete-container';
-    container.style.position = 'relative';
+    container.id = 'stations-select-container';
+    container.style.margin = '10px 0';
 
-    const inputField = document.createElement('input');
-    inputField.type = 'text';
-    inputField.id = 'station-autocomplete';
-    inputField.placeholder = 'Station eingeben...';
-    inputField.style.width = '200px';
-    inputField.style.marginBottom = '10px';
-    container.appendChild(inputField);
+    const labelSearch = document.createElement('label');
+    labelSearch.setAttribute('for', 'stationSearch');
+    labelSearch.textContent = 'Station suchen:';
+    container.appendChild(labelSearch);
+    container.appendChild(document.createElement('br'));
 
-    const dropdown = document.createElement('ul');
-    dropdown.id = 'station-autocomplete-dropdown';
-    dropdown.style.position = 'absolute';
-    dropdown.style.top = '100%';
-    dropdown.style.left = '0';
-    dropdown.style.width = '200px';
-    dropdown.style.border = '1px solid #ccc';
-    dropdown.style.backgroundColor = '#fff';
-    dropdown.style.listStyle = 'none';
-    dropdown.style.padding = '0';
-    dropdown.style.margin = '0';
-    dropdown.style.display = 'none';
-    dropdown.style.maxHeight = '150px';
-    dropdown.style.overflowY = 'auto';
-    container.appendChild(dropdown);
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.id = 'stationSearch';
+    searchInput.placeholder = 'Station eingeben...';
+    searchInput.style.width = '200px';
+    searchInput.style.marginBottom = '10px';
+    container.appendChild(searchInput);
+
+    container.appendChild(document.createElement('br'));
+
+    const labelSelect = document.createElement('label');
+    labelSelect.setAttribute('for', 'stationSelect');
+    labelSelect.textContent = 'Station wählen:';
+    container.appendChild(labelSelect);
+    container.appendChild(document.createElement('br'));
+
+    const selectElement = document.createElement('select');
+    selectElement.id = 'stationSelect';
+    selectElement.style.width = '200px';
+
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- Bitte eine Station wählen --';
+    selectElement.appendChild(defaultOption);
+
+    container.appendChild(selectElement);
 
     searchDiv.insertBefore(container, document.getElementById('stationDataTable'));
 
     const allStations = markers.map(m => m.stationData);
+    let filteredStations = allStations;
+    populateStationsSelect(selectElement, filteredStations);
 
-    // Listen to input events
-    inputField.addEventListener('input', function () {
+    searchInput.addEventListener('input', function() {
         const query = this.value.toLowerCase().trim();
-        dropdown.innerHTML = ''; // Clear previous suggestions
-        dropdown.style.display = 'none';
-
-        if (query.length > 0) {
-            const filteredStations = allStations.filter(station =>
-                station.station_name.toLowerCase().includes(query)
-            );
-
-            if (filteredStations.length > 0) {
-                dropdown.style.display = 'block';
-                filteredStations.forEach(station => {
-                    const item = document.createElement('li');
-                    item.textContent = station.station_name;
-                    item.style.padding = '5px';
-                    item.style.cursor = 'pointer';
-                    item.style.borderBottom = '1px solid #ddd';
-
-                    item.addEventListener('click', function () {
-                        selectStation(station);
-                    });
-
-                    dropdown.appendChild(item);
-                });
-            }
-        }
+        filteredStations = allStations.filter(station =>
+            station.station_name.toLowerCase().includes(query)
+        );
+        populateStationsSelect(selectElement, filteredStations);
     });
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function (event) {
-        if (!container.contains(event.target)) {
-            dropdown.style.display = 'none';
+    selectElement.addEventListener('change', function() {
+        const selectedValue = this.value;
+        if (selectedValue) {
+            const chosenStation = filteredStations.find(s => s.Station_ID.toString() === selectedValue);
+
+            window.markerArray.forEach(marker => {
+                if (marker.stationData.Station_ID.toString() === selectedValue) {
+                    marker.setOpacity(1);
+                    window.map.setView([marker.stationData.Latitude, marker.stationData.Longitude], 15);
+                } else {
+                    marker.setOpacity(0);
+                }
+            });
+
+            if (chosenStation) {
+                const coords = [chosenStation.Latitude, chosenStation.Longitude];
+                console.log('Ausgewählte Station Koordinaten:', coords);
+                fillStationDataTable(chosenStation);
+            }
+        } else {
+            fillStationDataTable({});
         }
     });
-
-    // Handle keyboard navigation
-    inputField.addEventListener('keydown', function (event) {
-        const items = Array.from(dropdown.children);
-        const activeItem = dropdown.querySelector('.active');
-        let index = items.indexOf(activeItem);
-
-        if (event.key === 'ArrowDown') {
-            event.preventDefault();
-            index = (index + 1) % items.length;
-            highlightItem(items, index);
-        } else if (event.key === 'ArrowUp') {
-            event.preventDefault();
-            index = (index - 1 + items.length) % items.length;
-            highlightItem(items, index);
-        } else if (event.key === 'Enter') {
-            event.preventDefault();
-            if (activeItem) {
-                activeItem.click();
-            }
-        }
-    });
-
-    function highlightItem(items, index) {
-        items.forEach(item => item.classList.remove('active'));
-        if (index >= 0 && index < items.length) {
-            items[index].classList.add('active');
-            items[index].scrollIntoView({ block: 'nearest' });
-        }
-    }
-
-    function selectStation(station) {
-        inputField.value = station.station_name;
-        dropdown.style.display = 'none';
-
-        // Highlight marker and center map
-        window.markerArray.forEach(marker => {
-            if (marker.stationData.Station_ID === station.Station_ID) {
-                marker.setOpacity(1);
-                window.map.setView([marker.stationData.Latitude, marker.stationData.Longitude], 15);
-            } else {
-                marker.setOpacity(0);
-            }
-        });
-
-        fillStationDataTable(station);
-    }
 }
 
 function populateStationsSelect(selectElement, stations) {
-    // Clear existing options, but keep the default one
     while (selectElement.options.length > 1) {
         selectElement.remove(1);
     }
 
-    // Sort stations alphabetically by station_name
-    const sortedStations = stations.sort((a, b) => a.station_name.localeCompare(b.station_name));
-
-    // Populate the dropdown with sorted stations
-    sortedStations.forEach(station => {
+    stations.forEach(station => {
         const option = document.createElement('option');
         option.value = station.Station_ID;
         option.textContent = station.station_name;
@@ -227,4 +180,3 @@ function fillStationDataTable(stationData) {
         setTableCellValue('Beliebteste_Endstationen_sortiert', []);
     }
 }
-

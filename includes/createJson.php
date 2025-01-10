@@ -246,10 +246,15 @@ try {
         ];
     }
 
-    // JSON-Datei erstellen
-    $jsonData = json_encode($stations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+// Sort stations alphabetically by station_name
+usort($stations, function($a, $b) {
+    return strcmp($a['station_name'], $b['station_name']);
+});
 
-    file_put_contents('../data/stations.json', $jsonData);
+// JSON-Datei erstellen
+$jsonData = json_encode($stations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+file_put_contents('../data/stations.json', $jsonData);
 
     // Verbindung schließen
     $conn->close();
