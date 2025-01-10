@@ -43,7 +43,6 @@ function setupRouting(userLat, userLng) {
 
     createOrUpdateRoute();
 }
-
 function findNearestStation(userLat, userLng) {
     if (!window.markerArray || window.markerArray.length === 0) {
         return null;
@@ -58,22 +57,36 @@ function findNearestStation(userLat, userLng) {
         const dist = userPos.distanceTo(stationPos);
         if (dist < nearestDistance) {
             nearestDistance = dist;
-            nearest = marker.stationData;
+            nearest = {...marker.stationData, Distance: dist}; // Store the distance
         }
     });
 
     return nearest;
 }
 
+
 function hideAllStationsExcept(station) {
     window.markerArray.forEach(marker => {
         if (marker.stationData.Station_ID === station.Station_ID) {
+            console.log("Station Data:", station);
+            console.log("Marker Data:", marker.stationData);
+
+            // Update marker appearance
             marker.setOpacity(1);
+
+            // Use bindPopup for persistence
+            marker.bindPopup(`
+                <b>${station.station_name || marker.stationData.station_name || "Unbekannte Station"}</b><br>
+                Entfernung: ${(station.Distance / 1000).toFixed(2)} km
+            `).openPopup();
         } else {
             marker.setOpacity(0);
+            marker.closePopup(); // Close popups for other markers
         }
     });
 }
+
+
 
 function createOrUpdateRoute() {
     if (routeControl) {

@@ -85,15 +85,32 @@ function createOrUpdateRouteFromAddress(lat, lon, nearestStation) {
 }
 
 function recalculateRouteFromAddress() {
-    // Bei jeder Verschiebung des Markers neu berechnen
+    // Get the new position of the marker
     const userPos = addressMarker.getLatLng();
-    const nearestStation = findNearestStation(userPos.lat, userPos.lng);
 
-    if (!nearestStation) {
-        alert("Keine Stationen gefunden.");
-        return;
-    }
+    // Update the address using the reverse geocoding API
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userPos.lat}&lon=${userPos.lng}`;
 
-    hideAllStationsExcept(nearestStation);
-    createOrUpdateRouteFromAddress(userPos.lat, userPos.lng, nearestStation);
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // Update the popup content with the new address
+            const newAddress = data.display_name || "Unbekannte Adresse";
+            addressMarker.bindPopup(`<b>Neue Adresse:</b><br>${newAddress}`).openPopup();
+
+            // Find the nearest station and update the route
+            const nearestStation = findNearestStation(userPos.lat, userPos.lng);
+            if (!nearestStation) {
+                alert("Keine Stationen gefunden.");
+                return;
+            }
+
+            hideAllStationsExcept(nearestStation);
+            createOrUpdateRouteFromAddress(userPos.lat, userPos.lng, nearestStation);
+        })
+        .catch(err => {
+            console.error("Fehler bei der Rückwärts-Geocodierung:", err);
+            alert("Es ist ein Fehler bei der Adressaktualisierung aufgetreten.");
+        });
 }
+
