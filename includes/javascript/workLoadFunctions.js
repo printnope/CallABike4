@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     .map(cb => cb.value)
                     .filter(value => value !== 'alle') // Exclude "alle"
             ));
+         
             
 
             const buchungstypRadio = document.querySelector('input[name="buchungstyp"]:checked');
@@ -31,6 +32,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Marker filtern
             filterMarkersByCriteria(startTime, endTime, selectedWeekdays, buchungstyp, threshold, selectedPortals);
+            
+
 
             const formDiv = document.getElementById('filterForWorkload');
             if (formDiv) {
@@ -72,6 +75,8 @@ document.addEventListener('DOMContentLoaded', function () {
 function filterMarkersByCriteria(startTime, endTime, weekdays, buchungstyp, threshold, selectedPortals) {
     let allMarkers = window.markerArray || [];
     console.log(`Filter wird angewendet auf ${allMarkers.length} Marker`);
+        // Track the active legend type
+        let activeLegend = buchungstyp === 'beides' ? 'difference' : 'starts-ends';
 
     allMarkers.forEach(marker => {
         let stationData = marker.stationData;
@@ -91,6 +96,7 @@ function filterMarkersByCriteria(startTime, endTime, weekdays, buchungstyp, thre
         } else {
             marker.setOpacity(0);
         }
+        toggleLegend(activeLegend, threshold);
     });
 }
 
@@ -190,32 +196,36 @@ function getKurzWochentag(wochentagLang) {
 function setMarkerColorBasedOnValue(marker, startInPeriod, endInPeriod, buchungstyp, threshold) {
     let difference = startInPeriod - endInPeriod;
 
-    if (buchungstyp === 'abholung') {
-        if (startInPeriod > threshold) {
-            marker.setIcon(window.greenIcon);
-        } else if (startInPeriod < threshold) {
-            marker.setIcon(window.redIcon);
+    if (buchungstyp === 'beides') {
+        // Custom logic for 'beides'
+        if (Math.abs(difference) > threshold) {
+            // Imbalance exceeds threshold (red)
+            marker.setIcon(window.redIcon || window.defaultIcon);
+        } else if (Math.abs(difference) > threshold / 2) {
+            // Imbalance is between half-threshold and threshold (orange)
+            marker.setIcon(window.orangeIcon || window.defaultIcon);
         } else {
-            marker.setIcon(window.defaultIcon);
+            // Imbalance is below half-threshold (green)
+            marker.setIcon(window.greenIcon || window.defaultIcon);
         }
-    } else if (buchungstyp === 'abgabe') {
-        if (endInPeriod > threshold) {
-            marker.setIcon(window.greenIcon);
-        } else if (endInPeriod < threshold) {
-            marker.setIcon(window.redIcon);
-        } else {
-            marker.setIcon(window.defaultIcon);
-        }
-    } else if (buchungstyp === 'beides') {
-        if (difference < threshold || difference < -threshold) {
-            marker.setIcon(window.redIcon);
-        } else if (difference > threshold) {
-            marker.setIcon(window.greenIcon);
-        } else {
-            marker.setIcon(window.defaultIcon);
+    } else {
+        // Logic for 'abholung' and 'abgabe' remains unchanged
+        if (buchungstyp === 'abholung') {
+            if (startInPeriod > threshold) {
+                marker.setIcon(window.redIcon || window.defaultIcon);
+            } else {
+                marker.setIcon(window.greenIcon || window.defaultIcon);
+            }
+        } else if (buchungstyp === 'abgabe') {
+            if (endInPeriod > threshold) {
+                marker.setIcon(window.redIcon || window.defaultIcon);
+            } else {
+                marker.setIcon(window.greenIcon || window.defaultIcon);
+            }
         }
     }
 
+    // Update popup content
     marker.setPopupContent(
         `<b>${marker.stationData.station_name}</b><br>
          Startvorgaenge: ${startInPeriod}<br>
@@ -223,4 +233,43 @@ function setMarkerColorBasedOnValue(marker, startInPeriod, endInPeriod, buchungs
          Differenz: ${difference}`
     );
 }
+function toggleLegend(filterType, threshold) {
+    const startsEndsLegend = document.getElementById('starts-ends-legend');
+    const differenceLegend = document.getElementById('difference-legend');
+    const thresholdDisplayStartsEnds = document.getElementById('threshold-display-starts-ends');
+    const thresholdDisplayDifference = document.getElementById('threshold-display-difference');
+
+    // Check if elements exist
+    if (!startsEndsLegend || !differenceLegend) {
+        console.error('Legend elements not found in the DOM');
+        return;
+    }
+
+    // Reset visibility of legends
+    startsEndsLegend.style.display = 'none';
+    differenceLegend.style.display = 'none';
+
+    if (filterType === 'starts-ends') {
+        // Show Starts/Ends Legend
+        startsEndsLegend.style.display = 'block';
+
+            // Update threshold display dynamically for Starts/Ends
+            if (thresholdDisplayStartsEnds) {
+                const activityType = filterType === 'abholung' ? 'Abholungen-' : 'Abgaben-';
+                thresholdDisplayStartsEnds.textContent = `${activityType}Schwellenwert: ${threshold}`;
+            }
+
+    } else if (filterType === 'difference') {
+        // Show Difference Legend
+        differenceLegend.style.display = 'block';
+
+        // Update threshold display
+        if (thresholdDisplayDifference) {
+            thresholdDisplayDifference.textContent = `Schwellenwert: ${threshold}`;
+        }
+    } else {
+        console.error('Unknown filterType:', filterType);
+    }
+}
+
 

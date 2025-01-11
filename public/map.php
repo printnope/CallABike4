@@ -26,13 +26,23 @@
 
 
 <div id="map">
-    <div class="legend">
-        <h4>Legende</h4>
-        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png');"></i> Entspricht dem Schwellenwert<br>
-        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png');"></i> Liegt über dem Schwellenwert<br>
-        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png');"></i> Liegt unter dem Schwellenwert<br>
+    <div class="legend" id="starts-ends-legend" style="display: none;">
+        <h4>Legende: Aktivitätsanalyse </h4>
+        <p id="threshold-display-starts-ends"></p>
+        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png');"></i> Stationen liegen unter dem Schwellenwert<br>
+        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png');"></i> Stationen liegen auf dem Schwellenwert<br>
+        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png');"></i> Stationen liegen über dem Schwellenwert<br>
+    </div>
+    <div class="legend" id="difference-legend" style="display: block;">
+        <h4>Legende: Ungleichgewichts-Analyse</h4>
+        <p id="threshold-display-difference"></p>
+        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png');"></i> Ungleichgewicht liegt über dem Schwellenwert<br>
+        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png');"></i> Ungleichgewicht liegt über der Hälfte des Schwellenwerts<br>
+        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png');"></i> Ungleichgewicht liegt unter der Hälfte des Schwellenwerts<br>
+
     </div>
 </div>
+
 
 <div class="button-group">
     <div id = "visualize-map-container">
