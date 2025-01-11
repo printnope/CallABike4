@@ -33,7 +33,7 @@
         <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png');"></i> Stationen liegen auf dem Schwellenwert<br>
         <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png');"></i> Stationen liegen über dem Schwellenwert<br>
     </div>
-    <div class="legend" id="difference-legend" style="display: block;">
+    <div class="legend" id="difference-legend" style="display: none;">
         <h4>Legende: Ungleichgewichts-Analyse</h4>
         <p id="threshold-display-difference"></p>
         <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png');"></i> Ungleichgewicht liegt über dem Schwellenwert<br>
@@ -54,8 +54,8 @@
         <button onclick="showAddressSearch()">Route von beliebiger Adresse</button>
     </div>
     <div id = "analyze-container">
-        <button onclick="toggleChartsDisplay()">Diagramme</button>
         <button onclick="showSearchStation()">Details zu einer Station</button>
+        <button onclick="toggleChartsDisplay()">Diagramme</button>
     </div>
     <button onclick="resetMarkers()">Karte zurücksetzen</button>
 </div>
@@ -155,7 +155,7 @@
             </div>
         </fieldset>
 
-        <button type="submit" class="submit-btn">Filter anwenden</button>
+        <button type="submit" id="workloadSubmitButton" class="submit-btn">Filter anwenden</button>
     </form>
 </div>
 
