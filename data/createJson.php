@@ -254,7 +254,10 @@ usort($stations, function($a, $b) {
 // JSON-Datei erstellen
 $jsonData = json_encode($stations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
-file_put_contents('../data/stations.json', $jsonData);
+$filePath = __DIR__ . '/stations.json';
+file_put_contents($filePath, $jsonData);
+    echo 'Pfad zu stations.json: ' . realpath($filePath);
+
 
     // Verbindung schließen
     $conn->close();
