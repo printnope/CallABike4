@@ -39,8 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (formDiv) {
                 formDiv.style.display = 'none';
             }
-
-            document.getElementById('workload').style.display = 'none';
         });
     }
 
