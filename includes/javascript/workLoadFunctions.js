@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (formDiv) {
                 formDiv.style.display = 'none';
             }
+
         });
     }
 

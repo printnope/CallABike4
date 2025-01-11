@@ -89,6 +89,13 @@ fetch(pathToJson)
 
 function resetMarkers(){
 
+
+
+    const legends = document.getElementsByClassName('legend');
+    Array.from(legends).forEach(legend => {
+        legend.style.display = 'none';
+    });
+
     window.map.setView([50.1109, 8.6821], 13);
 
     if ( routeControl) {
