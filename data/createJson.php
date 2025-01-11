@@ -251,10 +251,22 @@ usort($stations, function($a, $b) {
     return strcmp($a['station_name'], $b['station_name']);
 });
 
-// JSON-Datei erstellen
-$jsonData = json_encode($stations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    $filePath = __DIR__ . '/stations.json'; // __DIR__ == Ordner dieses Skripts
+    $jsonData = json_encode($stations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
-file_put_contents('../data/stations.json', $jsonData);
+// Testausgabe vor dem Schreiben
+    echo "Vor dem Schreiben, ich erwarte: $filePath<br>\n";
+
+    $bytesWritten = @file_put_contents($filePath, $jsonData);
+    if ($bytesWritten === false) {
+        echo "Fehler: Konnte nicht in $filePath schreiben!<br>\n";
+    } else {
+        echo "Datei geschrieben: $bytesWritten Bytes nach $filePath<br>\n";
+    }
+
+// Noch einmal prüfen
+    $realPath = realpath($filePath);
+    echo "realpath: " . ($realPath ?: "Datei existiert nicht!") . "<br>\n";
 
     // Verbindung schließen
     $conn->close();
