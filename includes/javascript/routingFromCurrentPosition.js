@@ -3,6 +3,10 @@ let routeControl = null;
 let nearestStation = null;
 
 function startRoutingFromCurrentPosition() {
+    const legends = document.getElementsByClassName('legend');
+    Array.from(legends).forEach(legend => {
+        legend.style.display = 'none';
+    });
     if (!navigator.geolocation) {
         alert("Geolocation wird von deinem Browser nicht unterstützt.");
         return;
