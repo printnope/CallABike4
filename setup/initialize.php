@@ -7,7 +7,7 @@ $server = "localhost";
 $user = "root";
 $pass = "";
 $db = "callabiketeam4";
-
+set_time_limit(300);
 // File paths
 $stationsCsvPath = '../data/stations.csv';
 $routesCsvPath = '../data/routes.csv';
