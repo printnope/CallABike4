@@ -151,7 +151,7 @@ try {
         fclose($handle);
     }
 
-    // Close statements and connection
+
     $stationStmt->close();
     $routeStmt->close();
     $conn->close();

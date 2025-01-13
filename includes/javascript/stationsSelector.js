@@ -1,6 +1,4 @@
-// stationsSelector.js
-// Diese Version initialisiert die Stationsauswahl NUR wenn "Search for Station" gedrückt wird.
-// Der zuvor verwendete DOMContentLoaded und das Intervall wurden entfernt.
+
 
 function initializeStationSelectionUI(markers) {
     const searchDiv = document.getElementById('searchForStationDiv');
@@ -13,24 +11,6 @@ function initializeStationSelectionUI(markers) {
     container.id = 'stations-select-container';
     container.style.margin = '10px 0';
 
-    /*
-    // Commented out "Station eingeben" search input
-    const labelSearch = document.createElement('label');
-    labelSearch.setAttribute('for', 'stationSearch');
-    labelSearch.textContent = 'Station suchen:';
-    container.appendChild(labelSearch);
-    container.appendChild(document.createElement('br'));
-
-    const searchInput = document.createElement('input');
-    searchInput.type = 'text';
-    searchInput.id = 'stationSearch';
-    searchInput.placeholder = 'Station eingeben...';
-    searchInput.style.width = '200px';
-    searchInput.style.marginBottom = '10px';
-    container.appendChild(searchInput);
-
-    container.appendChild(document.createElement('br'));
-    */
 
     const labelSelect = document.createElement('label');
     labelSelect.setAttribute('for', 'stationSelect');
@@ -54,16 +34,7 @@ function initializeStationSelectionUI(markers) {
     const allStations = markers.map(m => m.stationData);
     populateStationsSelect(selectElement, allStations);
 
-    /*
-    // Commented out search input event listener
-    searchInput.addEventListener('input', function() {
-        const query = this.value.toLowerCase().trim();
-        const filteredStations = allStations.filter(station =>
-            station.station_name.toLowerCase().includes(query)
-        );
-        populateStationsSelect(selectElement, filteredStations);
-    });
-    */
+
 
     selectElement.addEventListener('change', function() {
         const selectedValue = this.value;

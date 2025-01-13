@@ -1,10 +1,10 @@
 <?php
 
-// Corrected paths based on your folder structure
+
 $initializePath = '../setup/initialize.php';
 $createJsonPath = '../setup/createJson.php';
 $pathToJsonFile = '../data/stations.json';
-$isInitialize = false;
+$isInitialize = true;
 
 if ($isInitialize) {
     // Zeitmessung für initialize.php

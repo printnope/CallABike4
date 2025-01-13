@@ -1,4 +1,3 @@
-// initMap.js
 
 window.markerArray = [];
 window.drawnFlowLines = [];

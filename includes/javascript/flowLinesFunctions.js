@@ -1,5 +1,3 @@
-// flowLinesFunctions.js
-// Stellt die Funktionalität für Flow-Lines bereit.
 
 document.addEventListener('DOMContentLoaded', function() {
     const flowLinesForm = document.getElementById('flowLinesForm');
