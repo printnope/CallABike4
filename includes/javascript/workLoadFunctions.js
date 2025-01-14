@@ -1,276 +1,243 @@
-// workLoadFunctions.js
-
-document.addEventListener('DOMContentLoaded', function () {
-    let filterForm = document.getElementById('filterForm');
-    if (filterForm) {
-        filterForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            const startTime = document.getElementById('von').value;
-            const endTime = document.getElementById('bis').value;
-
-            const weekdayCheckboxes = document.querySelectorAll('input[name="wochentage"]:checked');
-            const selectedWeekdays = Array.from(new Set(
-                Array.from(weekdayCheckboxes)
-                    .map(cb => cb.value)
-                    .filter(value => value !== 'alle') // Exclude "alle"
-            ));
-         
-            
-
-            const buchungstypRadio = document.querySelector('input[name="buchungstyp"]:checked');
-            const buchungstyp = buchungstypRadio ? buchungstypRadio.value : 'beides';
-
-            const portalCheckboxes = document.querySelectorAll('input[name="buchungsportale"]:checked');
-            const selectedPortals = Array.from(portalCheckboxes).map(cb => cb.value);
-
-            const thresholdInput = document.getElementById('threshold');
-            const threshold = parseInt(thresholdInput.value, 10);
-
-            console.log('Selected Weekdays:', selectedWeekdays);
-            console.log('Selected Portals:', selectedPortals);
-
-            // Marker filtern
-            filterMarkersByCriteria(startTime, endTime, selectedWeekdays, buchungstyp, threshold, selectedPortals);
-            
-
-
-            const formDiv = document.getElementById('filterForWorkload');
-            if (formDiv) {
-                formDiv.style.display = 'none';
-            }
-
-        });
-    }
-
- // Select/Deselect all weekdays functionality
- const selectAllWeekdaysButton = document.getElementById('selectAllWeekdaysButton');
- if (selectAllWeekdaysButton) {
-     selectAllWeekdaysButton.addEventListener('click', function () {
-         const weekdayCheckboxes = document.querySelectorAll('input[name="wochentage"]');
-         const allChecked = Array.from(weekdayCheckboxes).every(cb => cb.checked);
-
-         // Toggle all checkboxes
-         weekdayCheckboxes.forEach(cb => cb.checked = !allChecked);
-
-         // Update button text
-         selectAllWeekdaysButton.textContent = allChecked ? 'Alle auswählen' : 'Alle abwählen';
-     });
- }
- const selectAllPortalsButton = document.getElementById('selectAllPortalsButton');
- if (selectAllPortalsButton) {
-    selectAllPortalsButton.addEventListener('click', function () {
-         const weekdayCheckboxes = document.querySelectorAll('input[name="buchungsportale"]:not(#buchungsportale-alle)');
-         const allChecked = Array.from(weekdayCheckboxes).every(cb => cb.checked);
-
-         // Toggle all checkboxes
-         weekdayCheckboxes.forEach(cb => cb.checked = !allChecked);
-
-         // Update button text
-         selectAllPortalsButton.textContent = allChecked ? 'Alle auswählen' : 'Alle abwählen';
-     });
- }
-
-});
-
-function filterMarkersByCriteria(startTime, endTime, weekdays, buchungstyp, threshold, selectedPortals) {
-    let allMarkers = window.markerArray || [];
-    console.log(`Filter wird angewendet auf ${allMarkers.length} Marker`);
-        // Track the active legend type
-        let activeLegend = buchungstyp === 'beides' ? 'difference' : 'starts-ends';
-
-    allMarkers.forEach(marker => {
-        let stationData = marker.stationData;
-        let {startInPeriod, endInPeriod} = getStartEndInPeriod(stationData, weekdays, startTime, endTime, selectedPortals, buchungstyp);
-
-        let totalInPeriod = startInPeriod + endInPeriod;
-
-        let isBuchungstypMatch = (buchungstyp === 'beides') ||
-            (buchungstyp === 'abholung' && startInPeriod > 0) ||
-            (buchungstyp === 'abgabe' && endInPeriod > 0);
-
-        if (selectedPortals.length > 0 && totalInPeriod === 0) {
-            marker.setOpacity(0);
-        } else if (totalInPeriod > 0 && isBuchungstypMatch) {
-            marker.setOpacity(1);
-            setMarkerColorBasedOnValue(marker, startInPeriod, endInPeriod, buchungstyp, threshold);
-        } else {
-            marker.setOpacity(0);
-        }
-        toggleLegend(activeLegend, threshold);
-    });
-}
-
-function getStartEndInPeriod(stationData, weekdays, startTime, endTime, selectedPortals, buchungstyp) {
-    let startInPeriod = 0;
-    let endInPeriod = 0;
-
-    function processWeekday(wochentagKurz) {
-        const stundenDaten = stationData.Anzahl_Fahrten_pro_Wochentag_und_Stunde[wochentagKurz];
-        const portalDaten = stationData.Buchungsportale_pro_Wochentag_und_Stunde[wochentagKurz];
-        if (!stundenDaten || !portalDaten) return;
-
-        const startHour = parseInt(startTime.split(':')[0], 10);
-        const endHour = parseInt(endTime.split(':')[0], 10);
-
-        for (let hour = startHour; hour <= endHour; hour++) {
-            let stundenDataForHour = stundenDaten[hour];
-            let portalDataForHour = portalDaten[hour];
-            let { s, e } = accumulateHourData(stundenDataForHour, portalDataForHour, selectedPortals, buchungstyp);
-            startInPeriod += s;
-            endInPeriod += e;
-        }
-    }
-
-    function accumulateHourData(stundenDataForHour, portalDataForHour, selectedPortals, buchungstyp) {
-        let hourStart = 0;
-        let hourEnd = 0;
-
-        if (!stundenDataForHour || !portalDataForHour) {
-            return { s:0, e:0 };
-        }
-
-        if (selectedPortals.length > 0) {
-            selectedPortals.forEach(portal => {
-                const pd = portalDataForHour[portal];
-                if (pd && buchungstypFilterMatch(buchungstyp, pd)) {
-                    hourStart += pd.Anzahl_Startvorgaenge;
-                    hourEnd += pd.Anzahl_Endvorgaenge;
+    // workLoadFunctions.js
+    document.addEventListener('DOMContentLoaded', function () {
+        const filterForm = document.getElementById('filterForm'); 
+        if (filterForm) {
+            filterForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+        
+        // Retrieve currently active Filters
+        
+                // Retrieve time range
+                const startTime = document.getElementById('startzeit')?.value || '00:00';
+                const endTime = document.getElementById('endzeit')?.value || '23:59';
+    
+                // Parse hours
+                const startHour = parseInt(startTime.split(':')[0], 10); // decimal system parse
+                const endHour = parseInt(endTime.split(':')[0], 10);
+    
+                // Retrieve weekdays
+                const weekdayCheckboxes = document.querySelectorAll(
+                    '#filterForm input[name="wochentage"]:checked'
+                );
+                const selectedWeekdays = Array.from(weekdayCheckboxes).map(cb => cb.value);
+    
+                // Validate weekdays
+                if (selectedWeekdays.length === 0) {
+                    console.error("No weekdays selected.");
+                    return;
+                }
+    
+                // Retrieve booking type
+                const buchungstypRadio = document.querySelector('input[name="buchungstyp"]:checked');
+                const buchungstyp = buchungstypRadio?.value || 'beides';
+    
+                // Retrieve portals
+                const portalCheckboxes = document.querySelectorAll('input[name="buchungsportale"]:checked');
+                const selectedPortals = Array.from(portalCheckboxes).map(cb => cb.value);
+    
+                // Retrieve threshold
+                const thresholdInput = document.getElementById('threshold');
+                const threshold = parseInt(thresholdInput?.value, 10) || 0;
+    
+                console.log("Selected Weekdays:", selectedWeekdays);
+                console.log("Start Time:", startTime);
+                console.log("End Time:", endTime);
+                console.log("Parsed Start Hour:", startHour);
+                console.log("Parsed End Hour:", endHour);
+                console.log("Booking Type:", buchungstyp);
+                console.log("Selected Portals:", selectedPortals);
+                console.log("Threshold:", threshold);
+    
+                // Validate time range
+                if (isNaN(startHour) || isNaN(endHour)) {
+                    console.error("Invalid time range.");
+                    return;
+                }
+    
+                // Pass the values to filterStations
+                filterStations({
+                    startHour,
+                    endHour,
+                    weekdays: selectedWeekdays,
+                    buchungstyp,
+                    selectedPortals,
+                    threshold,
+                });
+    
+                // Hide the form after submission
+                const formDiv = document.getElementById('filterForWorkload');
+                if (formDiv) {
+                    formDiv.style.display = 'none';
                 }
             });
-        } else {
-            if (buchungstyp === 'abholung') {
-                hourStart += stundenDataForHour.Anzahl_Startvorgaenge;
-            } else if (buchungstyp === 'abgabe') {
-                hourEnd += stundenDataForHour.Anzahl_Endvorgaenge;
-            } else if (buchungstyp === 'beides') {
-                hourStart += stundenDataForHour.Anzahl_Startvorgaenge;
-                hourEnd += stundenDataForHour.Anzahl_Endvorgaenge;
-            }
-        }
-
-        return { s: hourStart, e: hourEnd };
-    }
-
-    weekdays.forEach(wochentagLang => {
-        if (wochentagLang.toLowerCase() === 'alle') {
-            ['Mo','Di','Mi','Do','Fr','Sa','So'].forEach(wochentagKurz => {
-                processWeekday(wochentagKurz);
-            });
-        } else {
-            let wochentagKurz = getKurzWochentag(wochentagLang);
-            if (wochentagKurz && stationData.Anzahl_Fahrten_pro_Wochentag_und_Stunde[wochentagKurz]) {
-                processWeekday(wochentagKurz);
-            }
         }
     });
 
-    return {startInPeriod, endInPeriod};
-}
-
-function buchungstypFilterMatch(buchungstyp, portalData) {
-    if (!portalData) return false;
-    if (buchungstyp === 'abholung') {
-        return portalData.Anzahl_Startvorgaenge > 0;
-    } else if (buchungstyp === 'abgabe') {
-        return portalData.Anzahl_Endvorgaenge > 0;
-    } else if (buchungstyp === 'beides') {
-        return (portalData.Anzahl_Startvorgaenge + portalData.Anzahl_Endvorgaenge) > 0;
+    function filterData({ startHour, endHour, weekdays, buchungstyp, selectedPortals, threshold }) {
+        const filteredData = [];
+    
+        window.markerArray.forEach(marker => {
+            const stationData = marker.stationData;
+            const portalData = stationData.Buchungsportale_pro_Wochentag_und_Stunde;
+    
+            let startInPeriod = 0;
+            let endInPeriod = 0;
+    
+            weekdays.forEach(day => {
+                const dailyData = portalData[day];
+                if (!dailyData) return;
+    
+                for (let hour = startHour; hour <= endHour; hour++) {
+                    const hourlyData = dailyData[hour];
+                    if (!hourlyData) continue;
+    
+                    if (selectedPortals.length > 0) {
+                        selectedPortals.forEach(portal => {
+                            const portalEntry = hourlyData[portal];
+                            if (portalEntry) {
+                                startInPeriod += portalEntry.Anzahl_Startvorgaenge || 0;
+                                endInPeriod += portalEntry.Anzahl_Endvorgaenge || 0;
+                            }
+                        });
+                    } else {
+                        for (let portal in hourlyData) {
+                            const portalEntry = hourlyData[portal];
+                            if (portalEntry) {
+                                startInPeriod += portalEntry.Anzahl_Startvorgaenge || 0;
+                                endInPeriod += portalEntry.Anzahl_Endvorgaenge || 0;
+                            }
+                        }
+                    }
+                }
+            });
+    
+            const totalInPeriod = startInPeriod + endInPeriod;
+    
+            // Add station data to filtered results if it passes the threshold
+            if (totalInPeriod > 0) {
+                filteredData.push({
+                    stationData,
+                    startInPeriod,
+                    endInPeriod,
+                    totalInPeriod,
+                });
+            }
+        });
+    
+        return filteredData;
     }
-    return false;
-}
+    function filterStations({ startHour, endHour, weekdays, buchungstyp, selectedPortals, threshold }) {
+        console.log("Filter Stations called with:");
+        console.log("Start Hour:", startHour);
+        console.log("End Hour:", endHour);
+        console.log("Selected Weekdays:", weekdays);
+        console.log("Booking Type:", buchungstyp);
+        console.log("Selected Portals:", selectedPortals);
+        console.log("Threshold:", threshold);
+    
+        if (isNaN(startHour) || isNaN(endHour) || weekdays.length === 0) {
+            console.error("Invalid filters: Missing time range or weekdays.");
+            return;
+        }
+    
+        // Get filtered data
+        const filteredData = filterData({ startHour, endHour, weekdays, buchungstyp, selectedPortals, threshold });
+    
+        // Determine the legend type
+        const legendType = buchungstyp === 'beides' ? 'difference' : 'starts-ends';
+    
+        // Update markers
+        window.markerArray.forEach(marker => {
+            const stationInfo = filteredData.find(data => data.stationData.Station_ID === marker.stationData.Station_ID);
+    
+            if (stationInfo) {
+                marker.setOpacity(1);
+                marker.setPopupContent(`
+                    <b>${stationInfo.stationData.station_name}</b><br>
+                    Startvorgänge: ${stationInfo.startInPeriod}<br>
+                    Endvorgänge: ${stationInfo.endInPeriod}<br>
+                    Gesamt: ${stationInfo.totalInPeriod}<br>
+                    Differenz: ${(stationInfo.startInPeriod - stationInfo.endInPeriod)} <!-- No abs here -->
+                `);
+                // Apply color logic based on the legend type
+                setMarkerColorBasedOnValue(
+                    marker,
+                    stationInfo.startInPeriod,
+                    stationInfo.endInPeriod,
+                    legendType,
+                    threshold
+                );
+            } else {
+                marker.setOpacity(0);
+            }
+        });
+    
+        // Toggle the legend display
+        toggleLegend(legendType, threshold);
+    }
 
-function getKurzWochentag(wochentagLang) {
-    const mapping = {
-        'alle': 'Alle',
-        'montag': 'Mo',
-        'dienstag': 'Di',
-        'mittwoch': 'Mi',
-        'donnerstag': 'Do',
-        'freitag': 'Fr',
-        'samstag': 'Sa',
-        'sonntag': 'So'
-    };
-    return mapping[wochentagLang.toLowerCase()];
-}
+    function setMarkerColorBasedOnValue(marker, startInPeriod, endInPeriod, legendType, threshold) {
+        const difference = Math.abs(startInPeriod - endInPeriod); // Absolute difference for 'beides'
+    
+        if (legendType === 'difference') {
+            // Coloring logic for 'beides' (difference-based)
+            if (difference > threshold) {
+                marker.setIcon(window.redIcon || window.defaultIcon);
+            } else if (difference > threshold / 2) {
+                marker.setIcon(window.orangeIcon || window.defaultIcon);
+            } else {
+                marker.setIcon(window.greenIcon || window.defaultIcon);
+            }
+        } else if (legendType === 'starts-ends') {
+            // Coloring logic for 'starts' or 'ends' total
+            const total = startInPeriod + endInPeriod;
+            if (total > threshold) {
+                marker.setIcon(window.redIcon || window.defaultIcon);
+            } else {
+                marker.setIcon(window.greenIcon || window.defaultIcon);
+            }
+        }
+    }
 
-function setMarkerColorBasedOnValue(marker, startInPeriod, endInPeriod, buchungstyp, threshold) {
-    let difference = startInPeriod - endInPeriod;
 
-    if (buchungstyp === 'beides') {
-        // Custom logic for 'beides'
-        if (Math.abs(difference) > threshold) {
-            // Imbalance exceeds threshold (red)
-            marker.setIcon(window.redIcon || window.defaultIcon);
-        } else if (Math.abs(difference) > threshold / 2) {
-            // Imbalance is between half-threshold and threshold (orange)
-            marker.setIcon(window.orangeIcon || window.defaultIcon);
+    
+    function toggleLegend(filterType, threshold) {
+        const startsEndsLegend = document.getElementById('starts-ends-legend');
+        const differenceLegend = document.getElementById('difference-legend');
+        const thresholdDisplayStartsEnds = document.getElementById('threshold-display-starts-ends');
+        const thresholdDisplayDifference = document.getElementById('threshold-display-difference');
+
+        // Check if elements exist
+        if (!startsEndsLegend || !differenceLegend) {
+            console.error('Legend elements not found in the DOM');
+            return;
+        }
+
+        // Reset visibility of legends
+        startsEndsLegend.style.display = 'none';
+        differenceLegend.style.display = 'none';
+
+        if (filterType === 'starts-ends') {
+            // Show Starts/Ends Legend
+            startsEndsLegend.style.display = 'block';
+
+                // Update threshold display dynamically for Starts/Ends
+                if (thresholdDisplayStartsEnds) {
+                    const activityType = filterType === 'abholung' ? 'Abholungen-' : 'Abgaben-';
+                    thresholdDisplayStartsEnds.textContent = `${activityType}Schwellenwert: ${threshold}`;
+                }
+
+        } else if (filterType === 'difference') {
+            // Show Difference Legend
+            differenceLegend.style.display = 'block';
+
+            // Update threshold display
+            if (thresholdDisplayDifference) {
+                thresholdDisplayDifference.textContent = `Schwellenwert: ${threshold}`;
+            }
         } else {
-            // Imbalance is below half-threshold (green)
-            marker.setIcon(window.greenIcon || window.defaultIcon);
-        }
-    } else {
-        // Logic for 'abholung' and 'abgabe' remains unchanged
-        if (buchungstyp === 'abholung') {
-            if (startInPeriod > threshold) {
-                marker.setIcon(window.redIcon || window.defaultIcon);
-            } else {
-                marker.setIcon(window.greenIcon || window.defaultIcon);
-            }
-        } else if (buchungstyp === 'abgabe') {
-            if (endInPeriod > threshold) {
-                marker.setIcon(window.redIcon || window.defaultIcon);
-            } else {
-                marker.setIcon(window.greenIcon || window.defaultIcon);
-            }
+            console.error('Unknown filterType:', filterType);
         }
     }
-
-    // Update popup content
-    marker.setPopupContent(
-        `<b>${marker.stationData.station_name}</b><br>
-         Startvorgaenge: ${startInPeriod}<br>
-         Endvorgaenge: ${endInPeriod}<br>
-         Differenz: ${difference}`
-    );
-}
-function toggleLegend(filterType, threshold) {
-    const startsEndsLegend = document.getElementById('starts-ends-legend');
-    const differenceLegend = document.getElementById('difference-legend');
-    const thresholdDisplayStartsEnds = document.getElementById('threshold-display-starts-ends');
-    const thresholdDisplayDifference = document.getElementById('threshold-display-difference');
-
-    // Check if elements exist
-    if (!startsEndsLegend || !differenceLegend) {
-        console.error('Legend elements not found in the DOM');
-        return;
-    }
-
-    // Reset visibility of legends
-    startsEndsLegend.style.display = 'none';
-    differenceLegend.style.display = 'none';
-
-    if (filterType === 'starts-ends') {
-        // Show Starts/Ends Legend
-        startsEndsLegend.style.display = 'block';
-
-            // Update threshold display dynamically for Starts/Ends
-            if (thresholdDisplayStartsEnds) {
-                const activityType = filterType === 'abholung' ? 'Abholungen-' : 'Abgaben-';
-                thresholdDisplayStartsEnds.textContent = `${activityType}Schwellenwert: ${threshold}`;
-            }
-
-    } else if (filterType === 'difference') {
-        // Show Difference Legend
-        differenceLegend.style.display = 'block';
-
-        // Update threshold display
-        if (thresholdDisplayDifference) {
-            thresholdDisplayDifference.textContent = `Schwellenwert: ${threshold}`;
-        }
-    } else {
-        console.error('Unknown filterType:', filterType);
-    }
-}
 
 

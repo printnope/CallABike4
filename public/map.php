@@ -86,13 +86,13 @@
     <fieldset>
     <legend>Wochentage auswählen</legend>
     <div class="checkbox-group"> 
-        <label><input type="checkbox" name="wochentage" value="montag" checked> Montag</label>
-        <label><input type="checkbox" name="wochentage" value="dienstag" checked> Dienstag</label>
-        <label><input type="checkbox" name="wochentage" value="mittwoch" checked> Mittwoch</label>
-        <label><input type="checkbox" name="wochentage" value="donnerstag" checked> Donnerstag</label>
-        <label><input type="checkbox" name="wochentage" value="freitag" checked> Freitag</label>
-        <label><input type="checkbox" name="wochentage" value="samstag" checked> Samstag</label>
-        <label><input type="checkbox" name="wochentage" value="sonntag" checked> Sonntag</label>
+    <label><input type="checkbox" name="wochentage" value="Mo" checked> Montag</label>
+        <label><input type="checkbox" name="wochentage" value="Di" checked> Dienstag</label>
+        <label><input type="checkbox" name="wochentage" value="Mi" checked> Mittwoch</label>
+        <label><input type="checkbox" name="wochentage" value="Do" checked> Donnerstag</label>
+        <label><input type="checkbox" name="wochentage" value="Fr" checked> Freitag</label>
+        <label><input type="checkbox" name="wochentage" value="Sa" checked> Samstag</label>
+        <label><input type="checkbox" name="wochentage" value="So" checked> Sonntag</label>
      </div>
      <button type="button" id="selectAllWeekdaysButton">Alle auswählen</button>
     </fieldset>
@@ -102,14 +102,14 @@
             <legend>Uhrzeiten auswählen</legend>
             <div class="time-select">
                 <label for="von">Von:</label>
-                <select name="von" id="von" required>
+                <select name="von" id="startzeit" required>
                     <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:00",$h); ?>
                         <option value="<?php echo $hour; ?>"><?php echo $hour; ?></option>
                     <?php endfor; ?>
                 </select>
 
                 <label for="bis">Bis:</label>
-                <select name="bis" id="bis" required>
+                <select name="bis" id="endzeit" required>
                     <?php for($h=0;$h<24;$h++): $hour=sprintf("%02d:59",$h); ?>
                         <option value="<?php echo $hour; ?>" <?php if ($h === 23){echo "selected";} ?>>
                             <?php echo $hour; ?>
@@ -198,13 +198,13 @@
                 <fieldset>
     <legend>Wochentage auswählen</legend>
     <div class="checkbox-group"> 
-        <label><input type="checkbox" name="wochentage" value="montag" checked> Montag</label>
-        <label><input type="checkbox" name="wochentage" value="dienstag" checked> Dienstag</label>
-        <label><input type="checkbox" name="wochentage" value="mittwoch" checked> Mittwoch</label>
-        <label><input type="checkbox" name="wochentage" value="donnerstag" checked> Donnerstag</label>
-        <label><input type="checkbox" name="wochentage" value="freitag" checked> Freitag</label>
-        <label><input type="checkbox" name="wochentage" value="samstag" checked> Samstag</label>
-        <label><input type="checkbox" name="wochentage" value="sonntag" checked> Sonntag</label>
+        <label><input type="checkbox" name="wochentage" value="Mo" checked> Montag</label>
+        <label><input type="checkbox" name="wochentage" value="Di" checked> Dienstag</label>
+        <label><input type="checkbox" name="wochentage" value="Mi" checked> Mittwoch</label>
+        <label><input type="checkbox" name="wochentage" value="Do" checked> Donnerstag</label>
+        <label><input type="checkbox" name="wochentage" value="Fr" checked> Freitag</label>
+        <label><input type="checkbox" name="wochentage" value="Sa" checked> Samstag</label>
+        <label><input type="checkbox" name="wochentage" value="So" checked> Sonntag</label>
      </div>
      <button type="button" id="chartSelectAllWeekdaysButton">Alle auswählen</button>
     </fieldset>

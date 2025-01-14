@@ -66,58 +66,76 @@ document.addEventListener('DOMContentLoaded', function () {
 function aggregateDataForCharts(stationsData, startTime, endTime, weekdays, buchungstyp, selectedPortals) {
     let aggregatedPortalCounts = {};
     let aggregatedTimeData = {};
-    const weekdayShorts = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+    const weekdayShorts = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
+    // Initialize the aggregated time data structure
     weekdayShorts.forEach(wd => {
         aggregatedTimeData[wd] = [];
-        for (let h=0; h<24; h++) {
-            aggregatedTimeData[wd][h] = {start:0, end:0, portals:{}};
+        for (let h = 0; h < 24; h++) {
+            aggregatedTimeData[wd][h] = { start: 0, end: 0, portals: {} };
         }
     });
 
-let usedWeekdays = weekdayShorts.filter(wd => {
-    return weekdays.map(w => getKurzWochentag(w)).includes(wd);
-});
+    // Filter weekdays to process
+    let usedWeekdays = weekdayShorts.filter(wd =>
+        weekdays.map(w => getKurzWochentag(w)).includes(wd)
+    );
 
-
+    // Iterate through each station
     stationsData.forEach(stationData => {
-        const {startInPeriod, endInPeriod, portalCounts, hourData} = getStartEndInPeriodForCharts(stationData, weekdays, startTime, endTime, selectedPortals, buchungstyp);
+        // Extract hourly data for the station
+        const { startInPeriod, endInPeriod, portalCounts, hourData } =
+            getStartEndInPeriodForCharts(
+                stationData,
+                weekdays,
+                startTime,
+                endTime,
+                selectedPortals,
+                buchungstyp
+            );
 
-        // Akkumulieren der Portalcounts
-        for (let p in portalCounts) {
-            if (!aggregatedPortalCounts[p]) aggregatedPortalCounts[p] = 0;
-            aggregatedPortalCounts[p] += portalCounts[p];
+        // Accumulate portal counts
+        for (let portal in portalCounts) {
+            if (!aggregatedPortalCounts[portal]) aggregatedPortalCounts[portal] = 0;
+            aggregatedPortalCounts[portal] += portalCounts[portal];
         }
 
-        // Akkumulieren der Zeitdaten
+        // Accumulate hourly data
         usedWeekdays.forEach(wd => {
             if (hourData[wd]) {
-                for (let h=0; h<24; h++) {
+                for (let h = 0; h < 24; h++) {
                     aggregatedTimeData[wd][h].start += hourData[wd][h].start;
                     aggregatedTimeData[wd][h].end += hourData[wd][h].end;
-                    for (let pp in hourData[wd][h].portals) {
-                        if(!aggregatedTimeData[wd][h].portals[pp]) aggregatedTimeData[wd][h].portals[pp]=0;
-                        aggregatedTimeData[wd][h].portals[pp]+= hourData[wd][h].portals[pp];
+
+                    // Aggregate portals
+                    for (let portal in hourData[wd][h].portals) {
+                        if (!aggregatedTimeData[wd][h].portals[portal]) {
+                            aggregatedTimeData[wd][h].portals[portal] = 0;
+                        }
+                        aggregatedTimeData[wd][h].portals[portal] += hourData[wd][h].portals[portal];
                     }
                 }
             }
         });
     });
 
-    // Jetzt von Summe auf Durchschnitt pro Station umrechnen
+    // Calculate averages per station
     const stationCount = stationsData.length;
-    // Durchschnitt für Portalcounts
-    for (let p in aggregatedPortalCounts) {
-        aggregatedPortalCounts[p] /= stationCount;
+
+    // Average portal counts
+    for (let portal in aggregatedPortalCounts) {
+        aggregatedPortalCounts[portal] /= stationCount;
     }
 
-    // Durchschnitt für Zeitdaten
+    // Average time data
     for (let wd in aggregatedTimeData) {
-        for (let h=0; h<24; h++) {
+        for (let h = 0; h < 24; h++) {
             aggregatedTimeData[wd][h].start /= stationCount;
             aggregatedTimeData[wd][h].end /= stationCount;
-            for (let pp in aggregatedTimeData[wd][h].portals) {
-                aggregatedTimeData[wd][h].portals[pp] /= stationCount;
+
+            // Average portal data for each hour
+            for (let portal in aggregatedTimeData[wd][h].portals) {
+                aggregatedTimeData[wd][h].portals[portal] /= stationCount;
             }
         }
     }
@@ -125,7 +143,7 @@ let usedWeekdays = weekdayShorts.filter(wd => {
     return {
         portals: aggregatedPortalCounts,
         timeData: aggregatedTimeData,
-        weekdays: usedWeekdays
+        weekdays: usedWeekdays,
     };
 }
 

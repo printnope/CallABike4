@@ -73,6 +73,7 @@ fetch(pathToJson)
         });
 
         console.log(`Marker wurden geladen: ${window.markerArray.length}`);
+        console.log(window.markerArray)
 
         window.stationIndexByName = {};
         data.forEach(st => {
@@ -88,9 +89,6 @@ fetch(pathToJson)
     .catch(error => console.error('Fehler beim Laden der Stationsdaten:', error));
 
 function resetMarkers(){
-
-
-
     const legends = document.getElementsByClassName('legend');
     Array.from(legends).forEach(legend => {
         legend.style.display = 'none';
@@ -98,7 +96,7 @@ function resetMarkers(){
 
     window.map.setView([50.1109, 8.6821], 13);
 
-    if ( routeControl) {
+    if (routeControl) {
         window.map.removeControl(routeControl);
         window.map.removeLayer(window.userMarker);
     }
