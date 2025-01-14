@@ -34,7 +34,7 @@ function searchAddressForRouting() {
                     recalculateRouteFromAddress();
                 });
 
-                // Nun suchen wir die nächste Station
+                // die nächste Station
                 const nearestStation = findNearestStation(lat, lon);
                 if (!nearestStation) {
                     alert("Keine Stationen gefunden.");

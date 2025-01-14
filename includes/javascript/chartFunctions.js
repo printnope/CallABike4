@@ -1,6 +1,4 @@
-// chartFunctions.js
-// Handhabt die Chart-Logik separat vom Marker-Filter.
-// Angepasst: Anstatt akkumulierten Gesamtzahlen werden nun Durchschnittswerte pro Station dargestellt.
+
 
 let pieChart;
 let lineChart;

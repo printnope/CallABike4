@@ -28,9 +28,9 @@
     <div class="legend" id="starts-ends-legend" style="display: none;">
         <h4>Legende: Aktivitätsanalyse </h4>
         <p id="threshold-display-starts-ends"></p>
-        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png');"></i> Stationen liegen unter dem Schwellenwert<br>
+        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png');"></i> Stationen liegen über dem Schwellenwert<br>
         <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png');"></i> Stationen liegen auf dem Schwellenwert<br>
-        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png');"></i> Stationen liegen über dem Schwellenwert<br>
+        <i style="background-image: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png');"></i> Stationen liegen unter dem Schwellenwert<br>
     </div>
     <div class="legend" id="difference-legend" style="display: none;">
         <h4>Legende: Ungleichgewichts-Analyse</h4>
@@ -275,6 +275,7 @@
 <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js"></script>
 <script src="../includes/javascript/initMap.js"></script>
 <script src="../includes/javascript/workLoadFunctions.js"></script>
 <script src="../includes/javascript/stationsSelector.js"></script>

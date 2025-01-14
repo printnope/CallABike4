@@ -1,33 +1,16 @@
-// stationsSelector.js
-// Diese Version initialisiert die Stationsauswahl NUR wenn "Search for Station" gedrückt wird.
-// Der zuvor verwendete DOMContentLoaded und das Intervall wurden entfernt.
+
 
 function initializeStationSelectionUI(markers) {
     const searchDiv = document.getElementById('searchForStationDiv');
     if (!searchDiv) return;
 
-    // Nur einmal ausführen
+    // Only initialize once
     if (document.getElementById('stations-select-container')) return;
 
     const container = document.createElement('div');
     container.id = 'stations-select-container';
     container.style.margin = '10px 0';
 
-    const labelSearch = document.createElement('label');
-    labelSearch.setAttribute('for', 'stationSearch');
-    labelSearch.textContent = 'Station suchen:';
-    container.appendChild(labelSearch);
-    container.appendChild(document.createElement('br'));
-
-    const searchInput = document.createElement('input');
-    searchInput.type = 'text';
-    searchInput.id = 'stationSearch';
-    searchInput.placeholder = 'Station eingeben...';
-    searchInput.style.width = '200px';
-    searchInput.style.marginBottom = '10px';
-    container.appendChild(searchInput);
-
-    container.appendChild(document.createElement('br'));
 
     const labelSelect = document.createElement('label');
     labelSelect.setAttribute('for', 'stationSelect');
@@ -49,21 +32,14 @@ function initializeStationSelectionUI(markers) {
     searchDiv.insertBefore(container, document.getElementById('stationDataTable'));
 
     const allStations = markers.map(m => m.stationData);
-    let filteredStations = allStations;
-    populateStationsSelect(selectElement, filteredStations);
+    populateStationsSelect(selectElement, allStations);
 
-    searchInput.addEventListener('input', function() {
-        const query = this.value.toLowerCase().trim();
-        filteredStations = allStations.filter(station =>
-            station.station_name.toLowerCase().includes(query)
-        );
-        populateStationsSelect(selectElement, filteredStations);
-    });
+
 
     selectElement.addEventListener('change', function() {
         const selectedValue = this.value;
         if (selectedValue) {
-            const chosenStation = filteredStations.find(s => s.Station_ID.toString() === selectedValue);
+            const chosenStation = allStations.find(s => s.Station_ID.toString() === selectedValue);
 
             window.markerArray.forEach(marker => {
                 if (marker.stationData.Station_ID.toString() === selectedValue) {
@@ -97,6 +73,7 @@ function populateStationsSelect(selectElement, stations) {
         selectElement.appendChild(option);
     });
 }
+
 
 function fillStationDataTable(stationData) {
     // Hilfsfunktion zum Setzen von Tabellenzellenwerten mit verschiedenen Formaten

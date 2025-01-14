@@ -1,5 +1,3 @@
-// flowLinesFunctions.js
-// Stellt die Funktionalität für Flow-Lines bereit.
 
 document.addEventListener('DOMContentLoaded', function() {
     const flowLinesForm = document.getElementById('flowLinesForm');
@@ -32,8 +30,8 @@ function populateStationsSelectFlowLines() {
     }
 
     // Stationen hinzufügen (hier station_name als value)
-    const allStations = window.stationsData || [];
-    allStations.forEach(st => {
+        const allStations = window.stationsData || []; // default to empty array, 'null'/'undefined' check
+        allStations.forEach(st => {
         const option = document.createElement('option');
         option.value = st.station_name;
         option.textContent = st.station_name;
@@ -64,12 +62,29 @@ function drawFlowLinesFromFavorites(stationsData, topN) {
             let endPos = [endCoords.lat, endCoords.lng];
             let weight = Math.max(1, 5 - index * 0.2);
 
+            // Create the main polyline
             let polyline = L.polyline([startPos, endPos], {
                 color: 'blue',
                 weight: weight,
                 opacity: 0.7
             }).addTo(window.map);
 
+            // Add an arrowhead to the polyline
+            const arrowHead = L.polylineDecorator(polyline, {
+                patterns: [
+                    {
+                        offset: '100%', // Arrowhead at the end
+                        repeat: 0,
+                        symbol: L.Symbol.arrowHead({
+                            pixelSize: 10, 
+                            polygon: true,
+                            pathOptions: { fillOpacity: 1, color: 'blue' }
+                        })
+                    }
+                ]
+            }).addTo(window.map);
+
+            // Bind popup to the polyline
             polyline.bindPopup(`
                 <b>Startstation:</b> ${station.station_name}<br>
                 <b>Endstation:</b> ${endStationName}<br>
@@ -77,12 +92,13 @@ function drawFlowLinesFromFavorites(stationsData, topN) {
             `);
 
             if (!window.drawnFlowLines) window.drawnFlowLines = [];
-            window.drawnFlowLines.push(polyline);
+            window.drawnFlowLines.push(polyline, arrowHead);
         });
     });
 
     hideNonRelevantStations(relevantStations);
 }
+
 
 function removeExistingFlowLines() {
     if (window.drawnFlowLines && window.drawnFlowLines.length > 0) {

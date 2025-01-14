@@ -1,4 +1,3 @@
-// initMap.js
 
 window.markerArray = [];
 window.drawnFlowLines = [];
@@ -42,6 +41,7 @@ window.orangeIcon = new L.Icon({
 
 // Karte
 window.map = L.map('map').setView([50.1109, 8.6821], 13);
+
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap-Mitwirkende',
     maxZoom: 19,

@@ -1,4 +1,4 @@
-// workLoadFunctions.js
+
 
 document.addEventListener('DOMContentLoaded', function () {
     let filterForm = document.getElementById('filterForm');
